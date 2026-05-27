@@ -1,0 +1,27 @@
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Variables de entorno (¡NO subir al repositorio!)
+.env
+
+# Base de datos SQLite (ya no se usa, pero por si acaso)
+BaseDatos/db.sqlite3
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+
+# Backup de datos
+datos_backup.json

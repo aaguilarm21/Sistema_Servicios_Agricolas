@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from accounts.forms import AdminUserCreationForm
-from accounts.models import Empleado, UserProfile, RegistroOperativo
+from accounts.models import Empleado, UserProfile, RegistroOperativo, Proveedor, Maquinaria, Auxiliar, Labor, Variedad, Municipio
 
 
 def user_is_admin(user):
@@ -81,7 +81,22 @@ def registros_operativos(request):
         )
         messages.success(request, 'Boleta guardada correctamente.')
         return redirect('registros')
-    return render(request, 'registros_operativos.html')
+    
+    proveedores = Proveedor.objects.all().order_by('razon_social')
+    maquinarias = Maquinaria.objects.all().order_by('codigo_maquina')
+    fincas = Auxiliar.objects.filter(tipo__icontains='finca').order_by('nombre')
+    labores = Labor.objects.all().order_by('codigo')
+    variedades = Variedad.objects.all().order_by('descripcion')
+    municipios = Municipio.objects.all().order_by('nombre')
+    
+    return render(request, 'registros_operativos.html', {
+        'proveedores': proveedores,
+        'maquinarias': maquinarias,
+        'fincas': fincas,
+        'labores': labores,
+        'variedades': variedades,
+        'municipios': municipios,
+    })
 
 
 @login_required
@@ -205,4 +220,20 @@ def reportes(request):
     if not user_is_admin(request.user):
         messages.warning(request, 'No tienes permisos para acceder a este módulo.')
         return redirect('modulos')
-    return render(request, 'reportes.html')
+        
+    tipo_reporte = request.GET.get('tipo_reporte')
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    
+    registros = None
+    
+    if tipo_reporte and fecha_inicio and fecha_fin:
+        registros = RegistroOperativo.objects.filter(
+            tipo_servicio=tipo_reporte,
+            fecha_labor__gte=fecha_inicio,
+            fecha_labor__lte=fecha_fin
+        ).order_by('-fecha_labor')
+        
+    return render(request, 'reportes.html', {
+        'registros': registros
+    })

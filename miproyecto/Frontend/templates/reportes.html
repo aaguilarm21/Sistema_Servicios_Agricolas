@@ -10,15 +10,17 @@
   <style>
       .btn-primary { background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
       .btn-secondary { background: #e0e0e0; color: #333; border: none; border-radius: 5px; cursor: pointer; }
-      .button-row button, .button-row a { padding: 8px 14px; font-size: 0.95rem; }
+      .button-row button, .button-row a { padding: 6px 12px; font-size: 0.88rem; min-width: 120px; }
+      .button-row button.btn-secondary { min-width: 140px; }
       .records-list { display: grid; gap: 1rem; }
       .record-card { border: 1px solid #ddd; border-radius: 8px; padding: 14px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-      .record-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; }
-      .record-label { font-weight: 700; color: #333; }
+      .record-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+      .record-item { padding: 10px; border: 1px solid #f0f0f0; border-radius: 6px; background: #fafafa; }
+      .record-label { display: block; font-weight: 700; color: #333; margin-bottom: 4px; }
       .record-value { color: #444; }
       @media (max-width: 640px) {
           .button-row { flex-direction: column; align-items: stretch; }
-          .record-row { grid-template-columns: 1fr; }
+          .record-grid { grid-template-columns: 1fr; }
       }
       @media print {
           .btn-volver, .button-row, form { display: none !important; }
@@ -39,9 +41,9 @@
     <section class="form-card" style="margin-bottom: 2rem;">
       <h2>Filtros de Búsqueda</h2>
       <form method="GET" action="{% url 'reportes' %}">
-          <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px;">
             <label>Tipo de Reporte
-                <select name="tipo_reporte" required style="width: 100%; padding: 8px;">
+                <select name="tipo_reporte" required style="width: 100%; min-width: 240px; padding: 8px;">
                     <option value="">Seleccionar</option>
                     <option value="Aplicaciones aereas" {% if request.GET.tipo_reporte == 'Aplicaciones aereas' %}selected{% endif %}>Aplicaciones aéreas</option>
                     <option value="Envio de semilla de caña" {% if request.GET.tipo_reporte == 'Envio de semilla de caña' %}selected{% endif %}>Envío de semilla de caña</option>
@@ -69,19 +71,21 @@
 
     {% if registros != None %}
     <section class="form-card">
-        <h2>Resultados del Reporte ({{ registros|length }} registros encontrados)</h2>
+        <h2>Resultados del Reporte{% if request.GET.tipo_reporte %}: {{ request.GET.tipo_reporte }}{% endif %} ({{ registros|length }} registros encontrados)</h2>
         <div class="records-list" style="margin-top: 15px;">
             {% for r in registros %}
             <div class="record-card">
-                <div class="record-row"><span class="record-label">Boleta</span><span class="record-value">{{ r.no_boleta }}</span></div>
-                <div class="record-row"><span class="record-label">Fecha</span><span class="record-value">{{ r.fecha_labor|date:"d/m/Y" }}</span></div>
-                <div class="record-row"><span class="record-label">Finca / Lote</span><span class="record-value">{{ r.finca }} - {{ r.lote }}</span></div>
-                <div class="record-row"><span class="record-label">Labor</span><span class="record-value">{{ r.labor|default:"-" }}</span></div>
-                <div class="record-row"><span class="record-label">Proveedor</span><span class="record-value">{{ r.proveedor }}</span></div>
-                <div class="record-row"><span class="record-label">Máquina</span><span class="record-value">{{ r.codigo_maquina|default:"-" }}</span></div>
-                <div class="record-row"><span class="record-label">Operador</span><span class="record-value">{{ r.operador|default:"-" }}</span></div>
-                <div class="record-row"><span class="record-label">Unidades</span><span class="record-value">{{ r.unidades|default:"0.00" }}</span></div>
-                <div class="record-row"><span class="record-label">Costo U.</span><span class="record-value">Q{{ r.costo_unitario|default:"0.00" }}</span></div>
+                <div class="record-grid">
+                    <div class="record-item"><span class="record-label">Boleta</span><span class="record-value">{{ r.no_boleta }}</span></div>
+                    <div class="record-item"><span class="record-label">Fecha</span><span class="record-value">{{ r.fecha_labor|date:"d/m/Y" }}</span></div>
+                    <div class="record-item"><span class="record-label">Finca / Lote</span><span class="record-value">{{ r.finca }} - {{ r.lote }}</span></div>
+                    <div class="record-item"><span class="record-label">Labor</span><span class="record-value">{{ r.labor|default:"-" }}</span></div>
+                    <div class="record-item"><span class="record-label">Proveedor</span><span class="record-value">{{ r.proveedor }}</span></div>
+                    <div class="record-item"><span class="record-label">Máquina</span><span class="record-value">{{ r.codigo_maquina|default:"-" }}</span></div>
+                    <div class="record-item"><span class="record-label">Operador</span><span class="record-value">{{ r.operador|default:"-" }}</span></div>
+                    <div class="record-item"><span class="record-label">Unidades</span><span class="record-value">{{ r.unidades|default:"0.00" }}</span></div>
+                    <div class="record-item"><span class="record-label">Costo U.</span><span class="record-value">Q{{ r.costo_unitario|default:"0.00" }}</span></div>
+                </div>
             </div>
             {% empty %}
             <div style="padding: 20px; text-align: center; color: #666;">No se encontraron registros para los filtros seleccionados.</div>

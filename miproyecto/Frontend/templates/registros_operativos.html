@@ -45,9 +45,13 @@
                             <label for="tipo_servicio">Tipo Servicio</label>
                             <select id="tipo_servicio" name="tipo_servicio" required>
                                 <option value="">Seleccionar</option>
-                                <option value="corte">Corte de Caña</option>
-                                <option value="transporte">Transporte</option>
-                                <option value="mantenimiento">Mantenimiento</option>
+                                <option value="Aplicaciones aereas">Aplicaciones aereas</option>
+                                <option value="Envio de semilla de caña">Envio de semilla de caña</option>
+                                <option value="Maquinaria rentada">Maquinaria rentada</option>
+                                <option value="Servicio contratado">Servicio contratado</option>
+                                <option value="Servicios de pinchazo">Servicios de pinchazo</option>
+                                <option value="Transporte de personal">Transporte de personal</option>
+                                <option value="Viajes de material o maquinaria">Viajes de material o maquinaria</option>
                             </select>
                         </div>
                     </div>
@@ -59,21 +63,35 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="proveedor">Proveedor</label>
-                            <input type="text" id="proveedor" name="proveedor" required>
+                            <select id="proveedor" name="proveedor" required>
+                                <option value="">Seleccionar Proveedor</option>
+                                {% for prov in proveedores %}
+                                <option value="{{ prov.razon_social }}">{{ prov.codigo }} - {{ prov.razon_social }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="codigo_maquina">Código Máquina</label>
-                            <input type="text" id="codigo_maquina" name="codigo_maquina">
+                            <select id="codigo_maquina" name="codigo_maquina">
+                                <option value="">Seleccionar Máquina</option>
+                                {% for maq in maquinarias %}
+                                <option value="{{ maq.codigo_maquina }}" data-placa="{{ maq.placa_matricula|default:'' }}">{{ maq.codigo_maquina }} - {{ maq.tipo_maquina }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="placa">Placa</label>
                             <input type="text" id="placa" name="placa">
                         </div>
                     </div>
-                    <div class="form-row full">
+                    <div class="form-row two-cols">
                         <div class="form-group">
-                            <label for="operador">Operador</label>
-                            <input type="text" id="operador" name="operador">
+                            <label for="codigo_operador">Código Operador</label>
+                            <input type="text" id="codigo_operador" placeholder="Ingrese el código y presione Enter o Tab">
+                        </div>
+                        <div class="form-group">
+                            <label for="operador">Operador (Nombre)</label>
+                            <input type="text" id="operador" name="operador" readonly style="background-color: #f5f5f5;">
                         </div>
                     </div>
                 </div>
@@ -84,7 +102,12 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="finca">Finca</label>
-                            <input type="text" id="finca" name="finca" required>
+                            <select id="finca" name="finca" required>
+                                <option value="">Seleccionar Finca</option>
+                                {% for f in fincas %}
+                                <option value="{{ f.nombre }}">{{ f.codigo }} - {{ f.nombre }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="lote">Caña | Lote</label>
@@ -97,12 +120,12 @@
                     </div>
                     <div class="form-row three-cols">
                         <div class="form-group">
-                            <label for="actividad">Actividad</label>
-                            <input type="text" id="actividad" name="actividad">
+                            <label for="codigo_labor">Código Labor</label>
+                            <input type="text" id="codigo_labor" placeholder="Ingrese código">
                         </div>
                         <div class="form-group">
-                            <label for="labor">Labor</label>
-                            <input type="text" id="labor" name="labor">
+                            <label for="labor">Labor (Nombre)</label>
+                            <input type="text" id="labor" name="labor" readonly style="background-color: #f5f5f5;">
                         </div>
                         <div class="form-group">
                             <label for="corte_semilla">Lote Corte Semilla (Si=1 No=2)</label>
@@ -150,7 +173,12 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="variedad">Variedad</label>
-                            <input type="text" id="variedad" name="variedad">
+                            <select id="variedad" name="variedad">
+                                <option value="">Seleccionar Variedad</option>
+                                {% for var in variedades %}
+                                <option value="{{ var.descripcion }}">{{ var.codigo }} - {{ var.descripcion }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="total_paquetes">Total Paq/Cajas</label>
@@ -168,22 +196,32 @@
                     <div class="section-title">Supervisores</div>
                     <div class="form-row two-cols">
                         <div class="form-group">
-                            <label for="caporal_01">Caporal 01</label>
-                            <input type="text" id="caporal_01" name="caporal_01">
+                            <label for="codigo_caporal_01">Código Supervisor 1</label>
+                            <input type="text" id="codigo_caporal_01" placeholder="Ingrese código">
                         </div>
                         <div class="form-group">
-                            <label for="caporal_02">Caporal 02</label>
-                            <input type="text" id="caporal_02" name="caporal_02">
+                            <label for="caporal_01">Supervisor 1 (Nombre)</label>
+                            <input type="text" id="caporal_01" name="caporal_01" readonly style="background-color: #f5f5f5;">
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
-                            <label for="mayordomo">Mayordomo</label>
-                            <input type="text" id="mayordomo" name="mayordomo">
+                            <label for="codigo_caporal_02">Código Supervisor 2</label>
+                            <input type="text" id="codigo_caporal_02" placeholder="Ingrese código">
                         </div>
                         <div class="form-group">
-                            <label for="administrador">Administrador</label>
-                            <input type="text" id="administrador" name="administrador">
+                            <label for="caporal_02">Supervisor 2 (Nombre)</label>
+                            <input type="text" id="caporal_02" name="caporal_02" readonly style="background-color: #f5f5f5;">
+                        </div>
+                    </div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="codigo_mayordomo">Código Supervisor 3</label>
+                            <input type="text" id="codigo_mayordomo" placeholder="Ingrese código">
+                        </div>
+                        <div class="form-group">
+                            <label for="mayordomo">Supervisor 3 (Nombre)</label>
+                            <input type="text" id="mayordomo" name="mayordomo" readonly style="background-color: #f5f5f5;">
                         </div>
                     </div>
                 </div>
@@ -194,11 +232,21 @@
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="lugar_origen">Lugar de Origen</label>
-                            <input type="text" id="lugar_origen" name="lugar_origen">
+                            <select id="lugar_origen" name="lugar_origen">
+                                <option value="">Seleccionar Municipio</option>
+                                {% for m in municipios %}
+                                <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="lugar_destino">Lugar de Destino</label>
-                            <input type="text" id="lugar_destino" name="lugar_destino">
+                            <select id="lugar_destino" name="lugar_destino">
+                                <option value="">Seleccionar Municipio</option>
+                                {% for m in municipios %}
+                                <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -224,6 +272,79 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectMaquina = document.getElementById('codigo_maquina');
+            const inputPlaca = document.getElementById('placa');
+            
+            if (selectMaquina && inputPlaca) {
+                selectMaquina.addEventListener('change', function() {
+                    const selectedOption = selectMaquina.options[selectMaquina.selectedIndex];
+                    inputPlaca.value = selectedOption.dataset.placa || '';
+                });
+            }
+
+            function setupEmpleadoLookup(inputId, outputId) {
+                const inputEl = document.getElementById(inputId);
+                const outputEl = document.getElementById(outputId);
+                if (inputEl && outputEl) {
+                    inputEl.addEventListener('blur', function() {
+                        const codigo = this.value.trim();
+                        if (codigo) {
+                            fetch(`/accounts/api/buscar-usuario/?codigo=${codigo}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        outputEl.value = data.nombre;
+                                    } else {
+                                        outputEl.value = '';
+                                        alert(data.error || 'Empleado no encontrado.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    outputEl.value = '';
+                                });
+                        } else {
+                            outputEl.value = '';
+                        }
+                    });
+                }
+            }
+
+            setupEmpleadoLookup('codigo_operador', 'operador');
+            setupEmpleadoLookup('codigo_caporal_01', 'caporal_01');
+            setupEmpleadoLookup('codigo_caporal_02', 'caporal_02');
+            setupEmpleadoLookup('codigo_mayordomo', 'mayordomo');
+
+            const laboresDict = {
+                {% for l in labores %}
+                "{{ l.codigo }}": "{{ l.descripcion|escapejs }}",
+                {% endfor %}
+            };
+            const inputCodigoLabor = document.getElementById('codigo_labor');
+            const inputLabor = document.getElementById('labor');
+            if (inputCodigoLabor && inputLabor) {
+                inputCodigoLabor.addEventListener('blur', function() {
+                    const cod = inputCodigoLabor.value.trim();
+                    if (cod && laboresDict[cod]) {
+                        inputLabor.value = laboresDict[cod];
+                    } else {
+                        inputLabor.value = '';
+                        if (cod) alert('Labor no encontrada.');
+                    }
+                });
+            }
+
+            const inputNumFactura = document.getElementById('num_factura');
+            if (inputNumFactura) {
+                inputNumFactura.addEventListener('blur', function() {
+                    if (!this.value.trim()) {
+                        this.value = 'Ninguna';
+                    }
+                });
+            }
+        });
+
         function limpiarFormulario() {
             if (confirm('¿Desea limpiar todos los datos del formulario?')) {
                 document.querySelector('form').reset();

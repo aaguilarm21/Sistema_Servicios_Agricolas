@@ -772,9 +772,9 @@
 
     document.getElementById('cat-btn-limpiar').addEventListener('click', catLimpiar);
 
-    document.querySelectorAll('.catalogo-item').forEach(li => {
+    document.querySelectorAll('[data-catalogo]').forEach(li => {
       li.addEventListener('click', () => {
-        document.querySelectorAll('.catalogo-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('[data-catalogo]').forEach(el => el.classList.remove('active'));
         li.classList.add('active');
         catCargar(li.dataset.catalogo);
       });
