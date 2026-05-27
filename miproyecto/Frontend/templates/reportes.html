@@ -6,30 +6,89 @@
   <title>Reportes e Indicadores</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/registros.css' %}" />
+  <style>
+      .btn-primary { background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+      .btn-secondary { background: #e0e0e0; color: #333; border: none; border-radius: 5px; cursor: pointer; }
+      .button-row button, .button-row a { padding: 8px 14px; font-size: 0.95rem; }
+      .records-list { display: grid; gap: 1rem; }
+      .record-card { border: 1px solid #ddd; border-radius: 8px; padding: 14px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+      .record-row { display: grid; grid-template-columns: 170px 1fr; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; }
+      .record-label { font-weight: 700; color: #333; }
+      .record-value { color: #444; }
+      @media (max-width: 640px) {
+          .button-row { flex-direction: column; align-items: stretch; }
+          .record-row { grid-template-columns: 1fr; }
+      }
+      @media print {
+          .btn-volver, .button-row, form { display: none !important; }
+          .main-wrapper { padding: 0 !important; }
+      }
+  </style>
 </head>
 <body>
-  <div class="main-wrapper">
+  <div class="main-wrapper" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <header>
       <div>
-        <h1>Reportes e Indicadores</h1>
-        <p>Visualiza reportes y analiza indicadores del sistema.</p>
+        <h1>📊 Reportes e Indicadores</h1>
+        <p>Visualiza y genera reportes de las boletas de servicio ingresadas.</p>
       </div>
       <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
     </header>
 
-    <section class="form-card">
-      <h2>Reportes Disponibles</h2>
-      <div class="form-grid">
-        <label>Tipo de Reporte<select><option>Seleccionar</option><option>Producción</option><option>Costos</option><option>Operaciones</option><option>Personal</option></select></label>
-        <label>Período<input type="date" /></label>
-      </div>
-      <div class="button-row">
-        <button class="btn">Generar Reporte</button>
-        <button class="btn btn-secondary">Descargar PDF</button>
-      </div>
+    <section class="form-card" style="margin-bottom: 2rem;">
+      <h2>Filtros de Búsqueda</h2>
+      <form method="GET" action="{% url 'reportes' %}">
+          <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <label>Tipo de Reporte
+                <select name="tipo_reporte" required style="width: 100%; padding: 8px;">
+                    <option value="">Seleccionar</option>
+                    <option value="Aplicaciones aereas" {% if request.GET.tipo_reporte == 'Aplicaciones aereas' %}selected{% endif %}>Aplicaciones aéreas</option>
+                    <option value="Envio de semilla de caña" {% if request.GET.tipo_reporte == 'Envio de semilla de caña' %}selected{% endif %}>Envío de semilla de caña</option>
+                    <option value="Maquinaria rentada" {% if request.GET.tipo_reporte == 'Maquinaria rentada' %}selected{% endif %}>Maquinaria rentada</option>
+                    <option value="Servicio contratado" {% if request.GET.tipo_reporte == 'Servicio contratado' %}selected{% endif %}>Servicio contratado</option>
+                    <option value="Servicios de pinchazo" {% if request.GET.tipo_reporte == 'Servicios de pinchazo' %}selected{% endif %}>Servicios de pinchazo</option>
+                    <option value="Transporte de personal" {% if request.GET.tipo_reporte == 'Transporte de personal' %}selected{% endif %}>Transporte de personal</option>
+                    <option value="Viajes de material o maquinaria" {% if request.GET.tipo_reporte == 'Viajes de material o maquinaria' %}selected{% endif %}>Viajes de material o maquinaria</option>
+                </select>
+            </label>
+            <label>Fecha Inicio
+                <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}" required style="width: 100%; padding: 8px;" />
+            </label>
+            <label>Fecha Fin
+                <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}" required style="width: 100%; padding: 8px;" />
+            </label>
+          </div>
+          <div class="button-row" style="margin-top: 20px; display: flex; gap: 10px;">
+            <button type="submit" class="btn-primary">Generar Reporte</button>
+            <a href="{% url 'reportes' %}" class="btn-secondary" style="text-decoration: none; display: inline-block;">Limpiar Filtros</a>
+            <button type="button" class="btn-secondary" style="background-color: #f44336; color: white;" onclick="window.print()">🖨️ Imprimir / PDF</button>
+          </div>
+      </form>
     </section>
 
-
+    {% if registros != None %}
+    <section class="form-card">
+        <h2>Resultados del Reporte ({{ registros|length }} registros encontrados)</h2>
+        <div class="records-list" style="margin-top: 15px;">
+            {% for r in registros %}
+            <div class="record-card">
+                <div class="record-row"><span class="record-label">Boleta</span><span class="record-value">{{ r.no_boleta }}</span></div>
+                <div class="record-row"><span class="record-label">Fecha</span><span class="record-value">{{ r.fecha_labor|date:"d/m/Y" }}</span></div>
+                <div class="record-row"><span class="record-label">Finca / Lote</span><span class="record-value">{{ r.finca }} - {{ r.lote }}</span></div>
+                <div class="record-row"><span class="record-label">Labor</span><span class="record-value">{{ r.labor|default:"-" }}</span></div>
+                <div class="record-row"><span class="record-label">Proveedor</span><span class="record-value">{{ r.proveedor }}</span></div>
+                <div class="record-row"><span class="record-label">Máquina</span><span class="record-value">{{ r.codigo_maquina|default:"-" }}</span></div>
+                <div class="record-row"><span class="record-label">Operador</span><span class="record-value">{{ r.operador|default:"-" }}</span></div>
+                <div class="record-row"><span class="record-label">Unidades</span><span class="record-value">{{ r.unidades|default:"0.00" }}</span></div>
+                <div class="record-row"><span class="record-label">Costo U.</span><span class="record-value">Q{{ r.costo_unitario|default:"0.00" }}</span></div>
+            </div>
+            {% empty %}
+            <div style="padding: 20px; text-align: center; color: #666;">No se encontraron registros para los filtros seleccionados.</div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
   </div>
 </body>
 </html>
