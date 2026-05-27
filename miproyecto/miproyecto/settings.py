@@ -99,6 +99,10 @@ WSGI_APPLICATION = 'miproyecto.wsgi.application'
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
+# Si DB_HOST es una URL completa, la tratamos como DATABASE_URL
+if not DATABASE_URL and os.getenv('DB_HOST', '').startswith(('postgresql://', 'postgres://')):
+    DATABASE_URL = os.getenv('DB_HOST')
+
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL)
