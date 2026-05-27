@@ -25,3 +25,6 @@ media/
 
 # Backup de datos
 datos_backup.json
+
+# Archivos estáticos recopilados (producción)
+staticfiles/

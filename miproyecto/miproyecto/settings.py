@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+
+import dj_database_url
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,9 +30,18 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-btqhcotsy+wni(ajh5=stc-)hhy6dddthr7^dia)0ayxjm94dc')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
+# Hosts permitidos
 ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Hosts adicionales (separados por coma en la variable de entorno)
+EXTRA_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '')
+if EXTRA_HOSTS:
+    ALLOWED_HOSTS.extend(EXTRA_HOSTS.split(','))
 
 
 # Application definition
@@ -49,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,17 +95,25 @@ WSGI_APPLICATION = 'miproyecto.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# Usa DATABASE_URL si existe (Render/Supabase), sino usa variables individuales
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'sistema_agricola'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'sistema_agricola'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 
 # Password validation
@@ -134,3 +154,22 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'Frontend' / 'static',
 ]
+
+# Directorio donde collectstatic recopila archivos para producción
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise: compresión y cache de archivos estáticos
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CSRF — Confiar en el dominio de Render
+CSRF_TRUSTED_ORIGINS = []
+RENDER_HOST = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_HOST:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOST}')

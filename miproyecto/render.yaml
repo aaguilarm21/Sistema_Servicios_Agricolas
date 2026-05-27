@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sistema-servicios-agricolas
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn miproyecto.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
