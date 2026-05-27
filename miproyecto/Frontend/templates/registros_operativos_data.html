@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de datos - Registros Operativos</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/registros.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <div>
+                <h1>📋 Registros Operativos en Base de Datos</h1>
+                <p>Solo accesible para administradores.</p>
+            </div>
+            <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+        </div>
+
+        <div class="form-wrapper">
+            <div class="form-section">
+                <div class="form-row full">
+                    <div class="form-group">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Boleta</th>
+                                    <th>Fecha</th>
+                                    <th>Servicio</th>
+                                    <th>Proveedor</th>
+                                    <th>Máquina</th>
+                                    <th>Placa</th>
+                                    <th>Operador</th>
+                                    <th>Finca</th>
+                                    <th>Lote</th>
+                                    <th>Actividad</th>
+                                    <th>Labor</th>
+                                    <th>Peso Kg</th>
+                                    <th>Creado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in registros %}
+                                    <tr>
+                                        <td>{{ registro.no_boleta }}</td>
+                                        <td>{{ registro.fecha_labor }}</td>
+                                        <td>{{ registro.tipo_servicio }}</td>
+                                        <td>{{ registro.proveedor }}</td>
+                                        <td>{{ registro.codigo_maquina }}</td>
+                                        <td>{{ registro.placa }}</td>
+                                        <td>{{ registro.operador }}</td>
+                                        <td>{{ registro.finca }}</td>
+                                        <td>{{ registro.lote }}</td>
+                                        <td>{{ registro.actividad }}</td>
+                                        <td>{{ registro.labor }}</td>
+                                        <td>{{ registro.peso_kg }}</td>
+                                        <td>{{ registro.created_at }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="13">No hay registros operativos guardados.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

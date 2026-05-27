@@ -1,0 +1,208 @@
+import json
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group, User
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+
+from accounts.forms import AdminUserCreationForm
+from accounts.models import Empleado, UserProfile, RegistroOperativo
+
+
+def user_is_admin(user):
+    return user.is_authenticated and (user.is_superuser or user.groups.filter(name='Admin').exists())
+
+
+def user_is_user_or_admin(user):
+    return user.is_authenticated and (
+        user_is_admin(user) or user.groups.filter(name='Usuario').exists()
+    )
+
+
+@login_required
+def home(request):
+    return render(request, 'home.html')
+
+
+@login_required
+def modulos(request):
+    return render(request, 'modulos.html', {
+        'is_admin': user_is_admin(request.user)
+    })
+
+
+@login_required
+def configuracion_catalogos(request):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    return render(request, 'configuracion_catalogos.html')
+
+
+@login_required
+def registros_operativos(request):
+    if not user_is_user_or_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    if request.method == 'POST':
+        RegistroOperativo.objects.create(
+            no_boleta=request.POST.get('no_boleta', '').strip(),
+            fecha_labor=request.POST.get('fecha_labor') or None,
+            tipo_servicio=request.POST.get('tipo_servicio', '').strip(),
+            proveedor=request.POST.get('proveedor', '').strip(),
+            codigo_maquina=request.POST.get('codigo_maquina', '').strip() or None,
+            placa=request.POST.get('placa', '').strip() or None,
+            operador=request.POST.get('operador', '').strip() or None,
+            finca=request.POST.get('finca', '').strip(),
+            lote=request.POST.get('lote', '').strip(),
+            area_lote=request.POST.get('area_lote') or None,
+            actividad=request.POST.get('actividad', '').strip() or None,
+            labor=request.POST.get('labor', '').strip() or None,
+            corte_semilla=request.POST.get('corte_semilla', '').strip() or None,
+            unidades=request.POST.get('unidades') or None,
+            horometro_inicial=request.POST.get('horometro_inicial') or None,
+            horometro_final=request.POST.get('horometro_final') or None,
+            costo_unitario=request.POST.get('costo_unitario') or None,
+            num_factura=request.POST.get('num_factura', '').strip() or None,
+            cuenta_contable=request.POST.get('cuenta_contable', '').strip() or None,
+            variedad=request.POST.get('variedad', '').strip() or None,
+            total_paquetes=request.POST.get('total_paquetes') or None,
+            peso_kg=request.POST.get('peso_kg') or None,
+            caporal_01=request.POST.get('caporal_01', '').strip() or None,
+            caporal_02=request.POST.get('caporal_02', '').strip() or None,
+            mayordomo=request.POST.get('mayordomo', '').strip() or None,
+            administrador=request.POST.get('administrador', '').strip() or None,
+            lugar_origen=request.POST.get('lugar_origen', '').strip() or None,
+            lugar_destino=request.POST.get('lugar_destino', '').strip() or None,
+            observaciones=request.POST.get('observaciones', '').strip() or None,
+        )
+        messages.success(request, 'Boleta guardada correctamente.')
+        return redirect('registros')
+    return render(request, 'registros_operativos.html')
+
+
+@login_required
+def registros_operativos_data(request):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    registros = RegistroOperativo.objects.all()
+    return render(request, 'registros_operativos_data.html', {
+        'registros': registros,
+    })
+
+
+@login_required
+def usuarios(request):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    return render(request, 'usuarios.html')
+
+
+@login_required
+@require_http_methods(['POST'])
+def crear_usuario(request):
+    if not user_is_admin(request.user):
+        return JsonResponse({'success': False, 'error': 'No autorizado.'}, status=403)
+    try:
+        payload = json.loads(request.body.decode('utf-8') or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'JSON inválido'}, status=400)
+
+    codigo = payload.get('codigo', '').strip()
+    email = payload.get('email', '').strip()
+    password = payload.get('password', '')
+    rol = payload.get('rol', '').strip()
+    estado = payload.get('estado', '').strip()
+
+    if not codigo or not email or not password or not rol:
+        return JsonResponse({'success': False, 'error': 'Faltan datos requeridos.'}, status=400)
+
+    empleado = Empleado.objects.filter(puesto=codigo).first()
+    if not empleado:
+        return JsonResponse({'success': False, 'error': 'Empleado no encontrado.'}, status=404)
+
+    full_name = (empleado.empleado or '').strip()
+    if not full_name:
+        return JsonResponse({'success': False, 'error': 'El empleado no tiene nombre válido.'}, status=400)
+
+    generator = AdminUserCreationForm()
+    username = generator.generate_username(full_name)
+    username_base = username
+    contador = 1
+    while User.objects.filter(username=username).exists():
+        contador += 1
+        username = f"{username_base}{contador}"
+
+    name_parts = [part for part in full_name.split() if part]
+    first_name = name_parts[0] if name_parts else ''
+    last_name = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
+    is_active = estado.lower() == 'activo'
+
+    usuario = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        is_active=is_active,
+    )
+
+    group, _ = Group.objects.get_or_create(name=rol)
+    usuario.groups.add(group)
+    usuario.save()
+
+    UserProfile.objects.create(
+        usuario=usuario,
+        codigo=codigo,
+        puesto=empleado.nombre_puesto or empleado.puesto,
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Usuario creado con éxito.',
+        'username': username,
+        'password': password,
+    })
+
+
+@login_required
+def usuarios_creados(request):
+    if not user_is_admin(request.user):
+        return redirect('modulos')
+
+    users = User.objects.all().order_by('-date_joined')
+    usuarios_data = [
+        {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'nombre': f"{user.first_name} {user.last_name}".strip() or '-',
+            'grupos': ', '.join([g.name for g in user.groups.all()]) or 'Sin rol',
+            'fecha': timezone.localtime(user.date_joined),
+            'activo': 'Sí' if user.is_active else 'No',
+            'is_active': user.is_active,
+        }
+        for user in users
+    ]
+    return render(request, 'usuarios_creados.html', {'usuarios': usuarios_data})
+
+
+@login_required
+def operacion(request):
+    if not user_is_user_or_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    return render(request, 'operacion.html')
+
+
+@login_required
+def reportes(request):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    return render(request, 'reportes.html')

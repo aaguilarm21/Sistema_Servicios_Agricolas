@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportes e Indicadores</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+</head>
+<body>
+  <div class="main-wrapper">
+    <header>
+      <div>
+        <h1>Reportes e Indicadores</h1>
+        <p>Visualiza reportes y analiza indicadores del sistema.</p>
+      </div>
+      <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+    </header>
+
+    <section class="form-card">
+      <h2>Reportes Disponibles</h2>
+      <div class="form-grid">
+        <label>Tipo de Reporte<select><option>Seleccionar</option><option>Producción</option><option>Costos</option><option>Operaciones</option><option>Personal</option></select></label>
+        <label>Período<input type="date" /></label>
+      </div>
+      <div class="button-row">
+        <button class="btn">Generar Reporte</button>
+        <button class="btn btn-secondary">Descargar PDF</button>
+      </div>
+    </section>
+
+
+  </div>
+</body>
+</html>

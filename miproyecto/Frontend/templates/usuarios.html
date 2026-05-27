@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo de Usuarios</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal h2 {
+      margin-top: 0;
+    }
+    .modal .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-buttons {
+      margin-top: 1rem;
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-wrapper">
+    <header>
+      <div>
+        <h1>Módulo de Usuarios</h1>
+        <p>Gestiona los usuarios del sistema.</p>
+      </div>
+      <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+    </header>
+
+    <section class="form-card">
+      <h2>Crear Nuevo Usuario</h2>
+      <div class="form-grid grid-3-cols">
+        <label>
+          Código de Usuario
+          <input type="text" id="codigoUsuario" placeholder="Ingresa el código" autocomplete="off" />
+          <div class="loading" id="loadingIndicator">Buscando...</div>
+          <div class="error-message" id="errorMessage"></div>
+          <div class="success-message" id="successMessage"></div>
+        </label>
+        <label>
+          Nombre
+          <div class="field-readonly" id="nombreUsuario">-</div>
+        </label>
+        <label>
+          Puesto
+          <div class="field-readonly" id="puestoUsuario">-</div>
+        </label>
+      </div>
+
+      <div class="form-grid" id="formularioUsuarios">
+        <label>Email<input type="email" id="emailUsuario" placeholder="correo@ejemplo.com" /></label>
+        <label>Contraseña<input type="password" id="passwordUsuario" placeholder="Escribe la contraseña" autocomplete="new-password" /></label>
+        <label>Rol<select id="rolUsuario">
+            <option>Seleccionar</option>
+            <option>Admin</option>
+            <option>Usuario</option>
+          </select></label>
+      </div>
+
+      <div class="form-grid">
+        <label>Estado<select id="estadoUsuario">
+            <option>Activo</option>
+            <option>Inactivo</option>
+          </select></label>
+      </div>
+
+      <div class="button-row">
+        <button class="btn" id="btnCrearUsuario">Crear Usuario</button>
+        <button class="btn btn-secondary" onclick="limpiarFormulario()">Limpiar</button>
+        <button class="btn btn-secondary" id="btnVerUsuariosCreados" type="button">Ver Usuarios Creados</button>
+      </div>
+    </section>
+
+    <div id="infoModal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Usuario creado</h2>
+        <p id="modalMessage">Guarda esta información y no compartas tu contraseña con nadie.</p>
+        <p><strong>Usuario:</strong> <span id="modalUsername">-</span></p>
+        <p><strong>Contraseña:</strong> <span id="modalPassword">-</span></p>
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" id="closeModalButton" type="button">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{% static 'js/usuarios.js' %}"></script>
+  <script>
+    // Obtener elementos del DOM
+    const codigoInput = document.getElementById('codigoUsuario');
+    const nombreDisplay = document.getElementById('nombreUsuario');
+    const puestoDisplay = document.getElementById('puestoUsuario');
+    const emailInput = document.getElementById('emailUsuario');
+    const passwordInput = document.getElementById('passwordUsuario');
+    const rolSelect = document.getElementById('rolUsuario');
+    const estadoSelect = document.getElementById('estadoUsuario');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const btnCrearUsuario = document.getElementById('btnCrearUsuario');
+
+    // Agregar listener para búsqueda automática
+    codigoInput.addEventListener('input', debounce(buscarUsuario, 500));
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    function buscarUsuario() {
+      const codigo = codigoInput.value.trim();
+
+      // Limpiar mensajes previos
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      errorMessage.textContent = '';
+
+      if (!codigo) {
+        limpiarCampos();
+        return;
+      }
+
+      // Mostrar indicador de carga
+      loadingIndicator.style.display = 'block';
+
+      // Realizar solicitud AJAX
+      fetch(`/accounts/api/buscar-usuario/?codigo=${encodeURIComponent(codigo)}`)
+        .then(response => response.json())
+        .then(data => {
+          loadingIndicator.style.display = 'none';
+
+          if (data.success) {
+            // Mostrar datos del usuario
+            nombreDisplay.textContent = data.nombre;
+            puestoDisplay.textContent = data.puesto;
+            emailInput.value = data.email;
+            successMessage.style.display = 'block';
+            successMessage.textContent = 'Usuario encontrado ✓';
+
+            // Limpiar mensaje después de 3 segundos
+            setTimeout(() => {
+              successMessage.style.display = 'none';
+            }, 3000);
+          } else {
+            // Usuario no encontrado
+            limpiarCampos();
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = data.error || 'Usuario no encontrado';
+          }
+        })
+        .catch(error => {
+          loadingIndicator.style.display = 'none';
+          console.error('Error:', error);
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Error en la búsqueda';
+          limpiarCampos();
+        });
+    }
+
+    function limpiarCampos() {
+      nombreDisplay.textContent = '-';
+      puestoDisplay.textContent = '-';
+      emailInput.value = '';
+      passwordInput.value = '';
+      rolSelect.selectedIndex = 0;
+      estadoSelect.selectedIndex = 0;
+    }
+
+    function limpiarFormulario() {
+      codigoInput.value = '';
+      limpiarCampos();
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      loadingIndicator.style.display = 'none';
+    }
+
+    // Crear usuario
+    btnCrearUsuario.addEventListener('click', function () {
+      const nombre = nombreDisplay.textContent;
+      const puesto = puestoDisplay.textContent;
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const rol = rolSelect.value;
+      const estado = estadoSelect.value;
+      const codigo = codigoInput.value.trim();
+
+      // Validaciones
+      if (codigo === '') {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = 'Debes ingresar un código';
+        return;
+      }
+
+      if (nombre === '-' || puesto === '-') {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = 'Debes buscar un usuario válido primero';
+        return;
+      }
+
+      if (email === '') {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = 'Debes ingresar un email';
+        return;
+      }
+
+      if (password === '') {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = 'Debes ingresar una contraseña';
+        return;
+      }
+
+      if (rol === 'Seleccionar') {
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = 'Debes seleccionar un rol';
+        return;
+      }
+
+      const payload = {
+        codigo,
+        email,
+        password,
+        rol,
+        estado
+      };
+
+      const csrftoken = document.cookie.split(';')
+        .map(cookie => cookie.trim())
+        .find(cookie => cookie.startsWith('csrftoken='));
+      const tokenValue = csrftoken ? csrftoken.split('=')[1] : '';
+
+      fetch('/usuarios/crear/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': tokenValue
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            successMessage.style.display = 'block';
+            successMessage.textContent = data.message;
+            showModal(data.username, data.password, 'Guarda esta información y no compartas tu contraseña con nadie.');
+            setTimeout(() => {
+              hideModal();
+            }, 10000);
+            setTimeout(() => {
+              limpiarFormulario();
+              successMessage.style.display = 'none';
+            }, 3000);
+          } else {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = data.error || 'No se pudo crear el usuario.';
+          }
+        })
+        .catch(error => {
+          console.error('Error al crear usuario:', error);
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Error al crear el usuario.';
+        });
+    });
+
+    function showModal(username, password, message) {
+      document.getElementById('modalUsername').textContent = username || 'No disponible';
+      document.getElementById('modalPassword').textContent = password || 'No disponible';
+      document.getElementById('modalMessage').textContent = message;
+      document.getElementById('infoModal').style.display = 'block';
+    }
+
+    function hideModal() {
+      document.getElementById('infoModal').style.display = 'none';
+    }
+
+    document.getElementById('closeModal').addEventListener('click', hideModal);
+    document.getElementById('closeModalButton').addEventListener('click', hideModal);
+    window.addEventListener('click', function (event) {
+      if (event.target === document.getElementById('infoModal')) {
+        hideModal();
+      }
+    });
+  </script>
+</body>
+
+</html>

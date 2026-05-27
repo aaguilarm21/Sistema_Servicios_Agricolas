@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros Operativos</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/registros.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <div>
+                <h1>📝 Registros Operativos</h1>
+                <p>Ingrese los detalles de la boleta de servicio</p>
+            </div>
+            <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+        </div>
+
+        <div class="form-wrapper">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'registros' %}">
+                {% csrf_token %}
+
+                <!-- ENCABEZADO -->
+                <div class="form-section">
+                    <div class="section-title">Encabezado</div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="no_boleta">No. Boleta</label>
+                            <input type="text" id="no_boleta" name="no_boleta" class="highlight" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_labor">Fecha Labor</label>
+                            <input type="date" id="fecha_labor" name="fecha_labor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_servicio">Tipo Servicio</label>
+                            <select id="tipo_servicio" name="tipo_servicio" required>
+                                <option value="">Seleccionar</option>
+                                <option value="corte">Corte de Caña</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="mantenimiento">Mantenimiento</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROVEEDOR DE SERVICIO -->
+                <div class="form-section">
+                    <div class="section-title">Proveedor de Servicio</div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor</label>
+                            <input type="text" id="proveedor" name="proveedor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="codigo_maquina">Código Máquina</label>
+                            <input type="text" id="codigo_maquina" name="codigo_maquina">
+                        </div>
+                        <div class="form-group">
+                            <label for="placa">Placa</label>
+                            <input type="text" id="placa" name="placa">
+                        </div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label for="operador">Operador</label>
+                            <input type="text" id="operador" name="operador">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETALLE FINCA, LOTE, LABOR -->
+                <div class="form-section">
+                    <div class="section-title">Detalle Finca, Lote, Labor</div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="finca">Finca</label>
+                            <input type="text" id="finca" name="finca" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lote">Caña | Lote</label>
+                            <input type="text" id="lote" name="lote" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="area_lote">Área Lote (Ha)</label>
+                            <input type="number" id="area_lote" name="area_lote" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="actividad">Actividad</label>
+                            <input type="text" id="actividad" name="actividad">
+                        </div>
+                        <div class="form-group">
+                            <label for="labor">Labor</label>
+                            <input type="text" id="labor" name="labor">
+                        </div>
+                        <div class="form-group">
+                            <label for="corte_semilla">Lote Corte Semilla (Si=1 No=2)</label>
+                            <input type="text" id="corte_semilla" name="corte_semilla" placeholder="1 o 2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORMA DE PAGO -->
+                <div class="form-section">
+                    <div class="section-title">Forma de Pago</div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="unidades">Unidades</label>
+                            <input type="number" id="unidades" name="unidades" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="horometro_inicial">Horómetros Inicial</label>
+                            <input type="number" id="horometro_inicial" name="horometro_inicial" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="horometro_final">Horómetros Final</label>
+                            <input type="number" id="horometro_final" name="horometro_final" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="costo_unitario">Costo Unitario</label>
+                            <input type="number" id="costo_unitario" name="costo_unitario" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="num_factura">No. Factura</label>
+                            <input type="text" id="num_factura" name="num_factura">
+                        </div>
+                        <div class="form-group">
+                            <label for="cuenta_contable">Cuenta Contable</label>
+                            <input type="text" id="cuenta_contable" name="cuenta_contable">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETALLES DE CAÑA -->
+                <div class="form-section">
+                    <div class="section-title">Detalles de Caña</div>
+                    <div class="form-row three-cols">
+                        <div class="form-group">
+                            <label for="variedad">Variedad</label>
+                            <input type="text" id="variedad" name="variedad">
+                        </div>
+                        <div class="form-group">
+                            <label for="total_paquetes">Total Paq/Cajas</label>
+                            <input type="number" id="total_paquetes" name="total_paquetes">
+                        </div>
+                        <div class="form-group">
+                            <label for="peso_kg">Peso Kg</label>
+                            <input type="number" id="peso_kg" name="peso_kg" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUPERVISORES -->
+                <div class="form-section">
+                    <div class="section-title">Supervisores</div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="caporal_01">Caporal 01</label>
+                            <input type="text" id="caporal_01" name="caporal_01">
+                        </div>
+                        <div class="form-group">
+                            <label for="caporal_02">Caporal 02</label>
+                            <input type="text" id="caporal_02" name="caporal_02">
+                        </div>
+                    </div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="mayordomo">Mayordomo</label>
+                            <input type="text" id="mayordomo" name="mayordomo">
+                        </div>
+                        <div class="form-group">
+                            <label for="administrador">Administrador</label>
+                            <input type="text" id="administrador" name="administrador">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRANSPORTE -->
+                <div class="form-section">
+                    <div class="section-title">Detalle de Transporte</div>
+                    <div class="form-row two-cols">
+                        <div class="form-group">
+                            <label for="lugar_origen">Lugar de Origen</label>
+                            <input type="text" id="lugar_origen" name="lugar_origen">
+                        </div>
+                        <div class="form-group">
+                            <label for="lugar_destino">Lugar de Destino</label>
+                            <input type="text" id="lugar_destino" name="lugar_destino">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OBSERVACIONES -->
+                <div class="form-section">
+                    <div class="section-title">Observaciones</div>
+                    <div class="form-row full">
+                        <div class="form-group">
+                            <label for="observaciones">Notas Adicionales</label>
+                            <textarea id="observaciones" name="observaciones" placeholder="Escriba aquí cualquier comentario o nota importante..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">💾 Guardar Boleta</button>
+                    <button type="button" class="btn-secondary" onclick="limpiarFormulario()">🔄 Limpiar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function limpiarFormulario() {
+            if (confirm('¿Desea limpiar todos los datos del formulario?')) {
+                document.querySelector('form').reset();
+            }
+        }
+    </script>
+</body>
+</html>

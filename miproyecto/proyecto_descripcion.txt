@@ -1,0 +1,75 @@
+PROYECTO: Sistema de Servicios Agrícolas
+
+Descripción general:
+Este es un proyecto Django orientado a la gestión de servicios agrícolas, con autenticación de usuarios, roles y varios módulos administrativos y operativos.
+
+Estructura principal:
+- miproyecto/               -> configuración principal del proyecto Django.
+- accounts/                 -> app local de usuarios, autenticación, modelos y APIs.
+- Backend/                  -> vistas del frontend, control de accesos y lógica de negocio.
+- Frontend/                 -> templates HTML y archivos estáticos (CSS, JS, imágenes).
+- BaseDatos/                -> base de datos SQLite usada por el proyecto.
+
+Configuración básica:
+- `miproyecto/settings.py` configura la base de datos SQLite en `BaseDatos/db.sqlite3`.
+- `TEMPLATES` apunta a `Frontend/templates` y `STATICFILES_DIRS` apunta a `Frontend/static`.
+- `LOGIN_REDIRECT_URL` redirige a `/modulos/` tras iniciar sesión y `LOGOUT_REDIRECT_URL` va a `/accounts/login/`.
+
+Rutas principales:
+- `/`                     -> vista `home`, carga plantilla `home.html`.
+- `/accounts/login/`      -> login personalizado con `CustomLoginView` y formulario `CustomAuthenticationForm`.
+- `/accounts/`            -> incluye rutas de auth de Django y rutas propias de `accounts.urls`.
+- `/modulos/`             -> panel de módulos con acceso condicional a bases de datos para administradores.
+- `/configuracion/`       -> módulo de catálogos, solo para administradores.
+- `/registros/`           -> formulario de registros operativos para usuarios y administradores.
+- `/registros-data/`      -> listado de registros operativos, solo para administradores.
+- `/usuarios/`            -> pantalla módulo usuario, solo administradores.
+- `/usuarios/crear/`      -> API para crear usuarios desde el panel.
+- `/usuarios/creados/`    -> listado de usuarios.
+- `/operacion/`           -> módulo de operación agrícola, accesible para usuario/admin.
+- `/reportes/`            -> módulo de reportes, solo administradores.
+
+Autenticación y permisos:
+- Se usan usuarios estándar de Django (`django.contrib.auth.models.User`).
+- `CustomLoginView` usa un formulario de autenticación personalizada y `ajax_login` gestiona login por AJAX.
+- El mensaje de usuario inactivo es exactamente: `USUARIO INACTIVO, COMUNIQUESE CON EL ADMIN, PARA ACTIVARLO`.
+- El acceso a módulos se controla con funciones como `user_is_admin()` y `user_is_user_or_admin()`.
+- El módulo `registros_operativos_data` se muestra solo si `is_admin` es verdadero.
+
+Modelos clave en `accounts/models.py`:
+- `UserProfile`: perfil extendido de cada usuario con código y puesto.
+- `Proveedor`, `Empleado`, `Maquinaria`, `Bodega`, `Articulo`: catálogos de datos agrícolas.
+- `Labor`, `Cuenta`, `UnidadMedida`, `Variedad`, `TipoMaquina`, `Marca`, `Municipio`, `Auxiliar`: catálogos auxiliares.
+- `RegistroOperativo`: registra datos operativos como boleta, fecha, servicio, proveedor, máquina, finca, lote, costos y observaciones.
+
+Lógica de negocio en Backend:
+- `modulos()`: renderiza el panel de módulos y pasa `is_admin` para mostrar el módulo de base de datos.
+- `configuracion_catalogos()`: restringe acceso a administradores.
+- `registros_operativos()`: acepta POST para guardar un nuevo `RegistroOperativo` en la base de datos.
+- `registros_operativos_data()`: lista todos los registros para administradores.
+- `crear_usuario()`: recibe JSON para crear usuarios con roles y perfiles.
+- `usuarios_creados()`: muestra usuarios ordenados por fecha.
+- `operacion()` y `reportes()`: páginas de módulo con acceso condicional.
+
+Frontend y estilo:
+- `Frontend/templates/modulos.html`: presenta el panel de módulos, botones de cerrar sesión y cambiar usuario, modal de cambio de login y mensajes de advertencia.
+- `Frontend/templates/registros_operativos_data.html`: lista tabular de registros almacenados.
+- `Frontend/static/css/modulos.css`: estilos del panel de módulos, modal de login, popup de advertencia y barra de acción.
+- `Frontend/static/css/registros.css`: estilos para el listado de registros.
+
+Datos persistidos:
+- SQLite en `BaseDatos/db.sqlite3` guarda los modelos definidos en `accounts/models.py`.
+- El proyecto ya incluye migraciones para los modelos.
+
+Puntos importantes:
+- El proyecto está actualmente en modo `DEBUG = True` y no es seguro para producción.
+- El sistema maneja roles de administrador y usuario para controlar acceso a módulos.
+- La interfaz de `modulos.html` usa un modal de cambio de usuario que inicia sesión por AJAX.
+- Se separa la vista de frontend (`Backend/views.py`) de las rutas principales en `miproyecto/views.py`.
+
+Resumen funcional:
+1. Usuario puede iniciar sesión en `/accounts/login/`.
+2. Desde `/modulos/` accede a diferentes áreas según rol.
+3. Administradores pueden ver datos guardados en `/registros-data/`.
+4. Registros operativos se guardan al enviar el formulario en `/registros/`.
+5. El proyecto agrega y usa modelos agrícolas y perfiles de usuario.

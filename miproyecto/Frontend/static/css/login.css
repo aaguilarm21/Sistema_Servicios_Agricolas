@@ -1,0 +1,197 @@
+/* Styles for the login page */
+
+:root {
+  --bg: #e8f5e8;
+  --card: #ffffff;
+  --text: #1b5e20;
+  --muted: #2e7d32;
+  --accent: #388e3c;
+  --accent-2: #2e7d32;
+  --shadow: 0 10px 20px rgba(56, 142, 60, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  background: linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)),
+    url("../images/login2.jpg") center/cover no-repeat fixed;
+  background-color: var(--bg);
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.login-page {
+  width: 100%;
+  max-width: 420px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 2.2rem 2.2rem 1.8rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.login-card h1 {
+  margin: 0 0 1.2rem;
+  font-size: 1.6rem;
+  letter-spacing: 0.01em;
+}
+
+.alert {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #b91c1c;
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.field label {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.field input {
+  height: 42px;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.18);
+}
+
+.btn {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 420px) {
+  .login-card {
+    padding: 1.8rem 1.6rem 1.4rem;
+  }
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 2.2rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  width: 80%;
+  max-width: 400px;
+  margin: 15% auto;
+  position: relative;
+}
+
+.modal-content h2 {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+}
+
+.modal-content p {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.close {
+  color: var(--muted);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.close:hover {
+  color: var(--text);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.btn-secondary {
+  background: var(--muted);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  padding: 0.75rem 1.5rem;
+}
+
+.btn-secondary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}

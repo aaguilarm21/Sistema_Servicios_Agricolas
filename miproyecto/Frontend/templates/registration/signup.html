@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear usuario</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+</head>
+<body>
+  <main class="login-page">
+    <section class="login-card">
+      <h1>Crear un nuevo usuario</h1>
+
+      {% if mensaje %}
+        <div class="alert">{{ mensaje }}</div>
+      {% endif %}
+
+      <form method="post" action="." id="signupForm">
+        {% csrf_token %}
+        <div class="field">
+          <label for="id_full_name">Nombre completo</label>
+          {{ form.full_name }}
+        </div>
+        <div class="field">
+          <label for="id_username">Usuario</label>
+          {{ form.username }}
+          <small style="color: #2e7d32; font-size: 0.9rem;">El usuario se genera automáticamente y no se puede editar.</small>
+        </div>
+        <div class="field">
+          <label for="id_puesto">Puesto</label>
+          {{ form.puesto }}
+        </div>
+        <div class="field">
+          <label for="id_rol">Rol</label>
+          {{ form.rol }}
+        </div>
+        <div class="field">
+          <label for="id_password1">Contraseña</label>
+          {{ form.password1 }}
+        </div>
+        <div class="field">
+          <label for="id_password2">Confirmar contraseña</label>
+          {{ form.password2 }}
+        </div>
+        <button type="submit" class="btn" id="createBtn">Crear usuario</button>
+      </form>
+
+      <p>¿Quieres regresar? <a href="{% url 'home' %}">Ir al inicio</a></p>
+
+      <div id="infoModal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="closeModal">&times;</span>
+          <h2>Guarda esta información</h2>
+          <p id="modalMessage">Guarda tu usuario y contraseña, y no compartas tu contraseña con nadie.</p>
+          <p><strong>Usuario:</strong> <span id="modalUsername"></span></p>
+          <p><strong>Contraseña:</strong> <span id="modalPassword"></span></p>
+          <div class="modal-buttons">
+            <button class="btn-secondary" id="closeModalButton" type="button">Cerrar</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function normalizeUsername(fullName) {
+          const normalized = fullName.normalize('NFKD').replace(/\p{Diacritic}/gu, '');
+          const parts = normalized.trim().toLowerCase().split(/\s+/).filter(Boolean);
+          if (!parts.length) {
+            return '';
+          }
+          const firstInitial = parts[0].charAt(0);
+          const lastName = parts[parts.length - 1];
+          return `${firstInitial}${lastName}`.replace(/[^a-z0-9]/g, '');
+        }
+
+        function showModal(username, password, message) {
+          const modal = document.getElementById('infoModal');
+          document.getElementById('modalUsername').textContent = username || 'No disponible';
+          document.getElementById('modalPassword').textContent = password || 'No disponible';
+          document.getElementById('modalMessage').textContent = message;
+          modal.style.display = 'block';
+        }
+
+        function hideModal() {
+          document.getElementById('infoModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+          const fullNameInput = document.getElementById('id_full_name');
+          const usernameInput = document.getElementById('id_username');
+          const passwordInput = document.getElementById('id_password1');
+          const closeModal = document.getElementById('closeModal');
+          const closeModalButton = document.getElementById('closeModalButton');
+
+          fullNameInput.addEventListener('input', function () {
+            usernameInput.value = normalizeUsername(fullNameInput.value);
+          });
+
+          usernameInput.addEventListener('click', function () {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (!username) {
+              showModal('', '', 'Ingresa tu nombre completo para generar el usuario.');
+              return;
+            }
+            if (!password) {
+              showModal(username, '', 'Ingresa tu contraseña para poder ver tus credenciales y guárdalas en un lugar seguro.');
+              return;
+            }
+            showModal(username, password, 'Guarda esta información y no compartas tu contraseña con nadie.');
+          });
+
+          closeModal.addEventListener('click', hideModal);
+          closeModalButton.addEventListener('click', hideModal);
+          window.addEventListener('click', function (event) {
+            if (event.target === document.getElementById('infoModal')) {
+              hideModal();
+            }
+          });
+
+          const showModalOnSuccess = {{ show_modal|yesno:'true,false' }};
+          const createdUsername = '{{ created_username|escapejs }}';
+          const createdPassword = '{{ created_password|escapejs }}';
+          if (showModalOnSuccess && createdUsername) {
+            showModal(createdUsername, createdPassword, 'Usuario creado con éxito. Guarda esta información y no compartas tu contraseña con nadie.');
+          }
+        });
+      </script>
+    </section>
+  </main>
+</body>
+</html>

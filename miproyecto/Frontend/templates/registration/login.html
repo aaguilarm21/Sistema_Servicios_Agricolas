@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <style>
+    .login-warning {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 420px;
+      width: calc(100vw - 40px);
+      padding: 14px 16px;
+      background: #fff4e5;
+      border: 1px solid #ffb74d;
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+      color: #6d4c41;
+      font-weight: 600;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    .login-warning .warning-icon {
+      font-size: 1.4rem;
+    }
+    .login-warning .warning-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <main class="login-page">
+    <section class="login-card">
+      <h1>Iniciar sesión</h1>
+
+      {% if form.errors %}
+        <div id="loginWarningPopup" class="login-warning">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-text">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+            {% if not form.non_field_errors %}
+              {% for field in form %}
+                {% for error in field.errors %}
+                  {{ error }}
+                {% endfor %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <script>
+          setTimeout(function () {
+            const popup = document.getElementById('loginWarningPopup');
+            if (popup) {
+              popup.style.opacity = '0';
+              setTimeout(function () {
+                popup.style.display = 'none';
+              }, 300);
+            }
+          }, 3000);
+        </script>
+      {% endif %}
+
+      <form method="post" action=".">
+        {% csrf_token %}
+        <div class="field">
+          <label for="{{ form.username.id_for_label }}">Usuario</label>
+          {{ form.username }}
+        </div>
+        <div class="field">
+          <label for="{{ form.password.id_for_label }}">Contraseña</label>
+          {{ form.password }}
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

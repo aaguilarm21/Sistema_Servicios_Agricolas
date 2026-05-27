@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulos</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+</head>
+<body>
+  <div class="main-wrapper">
+    <header class="page-header">
+      <div>
+        <h1>Panel de Módulos del Sistema</h1>
+        <p>Accede a cada modulo para gestionar usuarios, catalagos, operaciones y reportes.</p>
+      </div>
+      <div class="status-info">
+        <span class="badge">Activo</span>
+        <span class="label">Usuario:</span>
+        <span class="user-name">{{ request.user.username }}</span>
+      </div>
+    </header>
+    <div class="action-panel">
+      <form action="{% url 'logout' %}" method="post" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Cerrar sesión</button>
+      </form>
+      <button class="btn btn-secondary" type="button" id="openLoginModal">Cambiar usuario</button>
+    </div>
+
+    <div class="login-modal-overlay" id="loginModalOverlay">
+      <div class="login-modal">
+        <button class="modal-close" id="closeLoginModal">✕</button>
+        <h2>Cambiar usuario</h2>
+        <div class="field">
+          <label for="switchUsername">Usuario</label>
+          <input type="text" id="switchUsername" autocomplete="username" />
+        </div>
+        <div class="field">
+          <label for="switchPassword">Contraseña</label>
+          <input type="password" id="switchPassword" autocomplete="current-password" />
+        </div>
+        <div class="modal-buttons">
+          <button class="btn btn-secondary" type="button" id="cancelLoginModal">Cancelar</button>
+          <button class="btn" type="button" id="submitLoginModal">Ingresar</button>
+        </div>
+        <p id="switchLoginError" class="switch-login-error"></p>
+      </div>
+    </div>
+
+    {% if messages %}
+      <div id="warningPopup" class="warning-popup">
+        <span class="warning-icon">⚠️</span>
+        <div>
+          {% for message in messages %}
+            <div class="warning-text">{{ message }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <script>
+        setTimeout(function () {
+          const warningPopup = document.getElementById('warningPopup');
+          if (warningPopup) {
+            warningPopup.style.opacity = '0';
+            setTimeout(function () {
+              warningPopup.style.display = 'none';
+            }, 300);
+          }
+        }, 3000);
+      </script>
+    {% endif %}
+    <script src="{% static 'js/common.js' %}"></script>
+    <script>
+      const modalOverlay = document.getElementById('loginModalOverlay');
+      const openModalButton = document.getElementById('openLoginModal');
+      const closeModalButton = document.getElementById('closeLoginModal');
+      const cancelModalButton = document.getElementById('cancelLoginModal');
+      const submitLoginModal = document.getElementById('submitLoginModal');
+      const switchUsername = document.getElementById('switchUsername');
+      const switchPassword = document.getElementById('switchPassword');
+      const switchLoginError = document.getElementById('switchLoginError');
+
+      function openLoginModal() {
+        switchUsername.value = '';
+        switchPassword.value = '';
+        switchLoginError.style.display = 'none';
+        modalOverlay.style.display = 'flex';
+      }
+
+      function closeLoginModal() {
+        modalOverlay.style.display = 'none';
+      }
+
+      openModalButton.addEventListener('click', openLoginModal);
+      closeModalButton.addEventListener('click', closeLoginModal);
+      cancelModalButton.addEventListener('click', closeLoginModal);
+      modalOverlay.addEventListener('click', function (event) {
+        if (event.target === modalOverlay) {
+          closeLoginModal();
+        }
+      });
+
+      submitLoginModal.addEventListener('click', function () {
+        const username = switchUsername.value.trim();
+        const password = switchPassword.value;
+        if (!username || !password) {
+          switchLoginError.textContent = 'Debes ingresar usuario y contraseña.';
+          switchLoginError.style.display = 'block';
+          return;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        fetch('/accounts/ajax-login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+          },
+          body: JSON.stringify({ username, password }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            } else {
+              switchLoginError.textContent = data.error || 'No se pudo iniciar sesión.';
+              switchLoginError.style.display = 'block';
+            }
+          })
+          .catch(() => {
+            switchLoginError.textContent = 'Error de conexión. Intenta de nuevo.';
+            switchLoginError.style.display = 'block';
+          });
+      });
+    </script>
+
+    <div class="modules-container">
+
+
+      <div class="modules-list compact">
+        <ul class="modules-menu">
+          <li><a href="{% url 'usuarios' %}" class="module-btn"><span class="icon">👤</span> Módulo de Usuarios</a></li>
+          <li><a href="{% url 'configuracion' %}" class="module-btn"><span class="icon">⚙️</span> Configuración y Catálogos</a></li>
+          <li><a href="{% url 'registros' %}" class="module-btn"><span class="icon">📝</span> Registros Operativos</a></li>
+          <li><a href="{% url 'operacion' %}" class="module-btn"><span class="icon">🚜</span> Operación Agrícola / Logística</a></li>
+          <li><a href="{% url 'reportes' %}" class="module-btn"><span class="icon">📊</span> Reportes e Indicadores</a></li>
+          {% if is_admin %}
+            <li><a href="{% url 'registros_data' %}" class="module-btn"><span class="icon">🗄️</span> Base de Datos Registros</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+
+</body>
+</html>

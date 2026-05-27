@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operación Agrícola / Logística</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+</head>
+<body>
+  <div class="main-wrapper">
+    <header>
+      <div>
+        <h1>Operación Agrícola / Logística</h1>
+        <p>Gestiona las operaciones agrícolas y logísticas.</p>
+      </div>
+      <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+    </header>
+
+    <section class="form-card">
+      <h2>Operaciones</h2>
+      <div class="form-grid">
+        <label>Tipo de Operación<select><option>Seleccionar</option><option>Siembra</option><option>Cosecha</option><option>Transporte</option></select></label>
+        <label>Fecha<input type="date" /></label>
+      </div>
+      <div class="form-grid">
+        <label>Descripción<textarea rows="3"></textarea></label>
+      </div>
+      <div class="button-row">
+        <button class="btn">Registrar Operación</button>
+        <button class="btn btn-secondary">Limpiar</button>
+      </div>
+    </section>
+
+
+  </div>
+</body>
+</html>
