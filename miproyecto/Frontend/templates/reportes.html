@@ -8,10 +8,56 @@
   <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
   <link rel="stylesheet" href="{% static 'css/registros.css' %}" />
   <style>
-      .btn-primary { background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
-      .btn-secondary { background: #e0e0e0; color: #333; border: none; border-radius: 5px; cursor: pointer; }
-      .button-row button, .button-row a { padding: 4px 8px; font-size: 0.82rem; min-width: 100px; }
-      .button-row button.btn-secondary { min-width: 110px; }
+      .btn-primary, .btn-secondary, .btn-imprimir {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          font-weight: 600;
+          border-radius: 8px;
+          border: 2px solid transparent;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          white-space: nowrap;
+          cursor: pointer;
+      }
+      .btn-primary, .btn-imprimir {
+          gap: 8px;
+          padding: 10px 16px;
+          font-size: 0.95rem;
+      }
+      .btn-secondary {
+          gap: 6px;
+          padding: 5px 12px;
+          font-size: 0.82rem;
+      }
+      .btn-primary {
+          background: #4CAF50;
+          color: white;
+      }
+      .btn-primary:hover {
+          background: #388e3c;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+      .btn-secondary {
+          background: #e0e0e0;
+          color: #333;
+      }
+      .btn-secondary:hover {
+          background: #bdbdbd;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+      .btn-imprimir {
+          background: #f44336;
+          color: white;
+      }
+      .btn-imprimir:hover {
+          background: #d32f2f;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
       .btn-volver { padding: 5px 10px !important; font-size: 0.82rem !important; }
       .records-list { display: grid; gap: 1rem; }
       .record-card { border: 1px solid #ddd; border-radius: 8px; padding: 14px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
@@ -20,7 +66,7 @@
       .record-label { display: block; font-weight: 700; color: #333; margin-bottom: 4px; }
       .record-value { color: #444; }
       @media (max-width: 640px) {
-          .button-row { flex-direction: column; align-items: stretch; }
+          .button-row { flex-direction: column; align-items: stretch; gap: 8px; }
           .record-grid { grid-template-columns: 1fr; }
       }
       @media print {
@@ -42,9 +88,9 @@
     <section class="form-card" style="margin-bottom: 2rem;">
       <h2>Filtros de Búsqueda</h2>
       <form method="GET" action="{% url 'reportes' %}">
-          <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px;">
-            <label>Tipo de Reporte
-                <select name="tipo_reporte" required style="width: 100%; min-width: 240px; padding: 8px;">
+          <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px;">
+            <label style="display: flex; flex-direction: column; gap: 6px;">Tipo de Reporte
+                <select name="tipo_reporte" required style="width: 100%; min-width: 300px; height: 38px; padding: 6px 10px; line-height: normal; box-sizing: border-box;">
                     <option value="">Seleccionar</option>
                     <option value="Aplicaciones aereas" {% if request.GET.tipo_reporte == 'Aplicaciones aereas' %}selected{% endif %}>Aplicaciones aéreas</option>
                     <option value="Envio de semilla de caña" {% if request.GET.tipo_reporte == 'Envio de semilla de caña' %}selected{% endif %}>Envío de semilla de caña</option>
@@ -55,17 +101,17 @@
                     <option value="Viajes de material o maquinaria" {% if request.GET.tipo_reporte == 'Viajes de material o maquinaria' %}selected{% endif %}>Viajes de material o maquinaria</option>
                 </select>
             </label>
-            <label>Fecha Inicio
-                <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}" required style="width: 100%; padding: 8px;" />
+            <label style="display: flex; flex-direction: column; gap: 6px;">Fecha Inicio
+                <input type="date" name="fecha_inicio" value="{{ request.GET.fecha_inicio }}" required style="width: 100%; height: 38px; padding: 6px 10px; line-height: normal; box-sizing: border-box;" />
             </label>
-            <label>Fecha Fin
-                <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}" required style="width: 100%; padding: 8px;" />
+            <label style="display: flex; flex-direction: column; gap: 6px;">Fecha Fin
+                <input type="date" name="fecha_fin" value="{{ request.GET.fecha_fin }}" required style="width: 100%; height: 38px; padding: 6px 10px; line-height: normal; box-sizing: border-box;" />
             </label>
           </div>
           <div class="button-row" style="margin-top: 20px; display: flex; gap: 10px;">
             <button type="submit" class="btn-primary">Generar Reporte</button>
-            <a href="{% url 'reportes' %}" class="btn-secondary" style="text-decoration: none; display: inline-block;">Limpiar Filtros</a>
-            <button type="button" class="btn-secondary" style="background-color: #f44336; color: white;" onclick="window.print()">🖨️ Imprimir / PDF</button>
+            <a href="{% url 'reportes' %}" class="btn-secondary">Limpiar Filtros</a>
+            <button type="button" class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / PDF</button>
           </div>
       </form>
     </section>

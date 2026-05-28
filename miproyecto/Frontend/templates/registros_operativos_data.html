@@ -6,67 +6,212 @@
     <title>Base de datos - Registros Operativos</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/registros.css' %}">
+    <style>
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1400px;
+        }
+        .records-table th, .records-table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid #e8f5e9;
+            white-space: nowrap;
+        }
+        .records-table th {
+            background-color: #2e7d32 !important;
+            color: white !important;
+            font-weight: 600;
+            border-bottom: 2px solid #1b5e20;
+        }
+        .records-table tbody tr:nth-child(even) {
+            background-color: #f9fbf9;
+        }
+        .records-table tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+        .text-center {
+            text-align: center !important;
+        }
+        .text-right {
+            text-align: right !important;
+        }
+        .btn-acciones {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            white-space: nowrap;
+        }
+        .btn-editar, .btn-eliminar {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+        }
+        .btn-editar {
+            background: #2e7d32;
+            color: white;
+        }
+        .btn-editar:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+        .btn-eliminar {
+            background: #d32f2f;
+            color: white;
+        }
+        .btn-eliminar:hover {
+            background: #b71c1c;
+            transform: translateY(-1px);
+        }
+        .btn-eliminar:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .records-table {
+                font-size: 0.75rem;
+                min-width: 1000px;
+            }
+            .records-table th, .records-table td {
+                padding: 8px 10px;
+            }
+            .btn-editar, .btn-eliminar {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .records-table {
+                font-size: 0.65rem;
+                min-width: 900px;
+            }
+            .records-table th, .records-table td {
+                padding: 6px 8px;
+            }
+            .btn-editar, .btn-eliminar {
+                padding: 3px 6px;
+                font-size: 0.6rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="main-container">
         <div class="header">
             <div>
                 <h1>📋 Registros Operativos en Base de Datos</h1>
-                <p>Solo accesible para administradores.</p>
+                <p>Administración de registros: editar o eliminar</p>
             </div>
             <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
         </div>
 
-        <div class="form-wrapper">
-            <div class="form-section">
-                <div class="form-row full">
-                    <div class="form-group">
-                        <table class="records-table">
-                            <thead>
+        <div class="form-wrapper" style="padding: 15px;">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-section" style="margin-bottom: 0; padding: 10px;">
+                <div class="table-container">
+                    <table class="records-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Boleta</th>
+                                <th class="text-center">Fecha</th>
+                                <th>Servicio</th>
+                                <th>Proveedor</th>
+                                <th class="text-center">Máquina</th>
+                                <th class="text-center">Placa</th>
+                                <th>Operador</th>
+                                <th>Finca</th>
+                                <th class="text-center">Lote</th>
+                                <th>Actividad</th>
+                                <th>Labor</th>
+                                <th class="text-right">Peso Kg</th>
+                                <th class="text-center">Creado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in registros %}
                                 <tr>
-                                    <th>Boleta</th>
-                                    <th>Fecha</th>
-                                    <th>Servicio</th>
-                                    <th>Proveedor</th>
-                                    <th>Máquina</th>
-                                    <th>Placa</th>
-                                    <th>Operador</th>
-                                    <th>Finca</th>
-                                    <th>Lote</th>
-                                    <th>Actividad</th>
-                                    <th>Labor</th>
-                                    <th>Peso Kg</th>
-                                    <th>Creado</th>
+                                    <td class="text-center" style="font-weight: 600; color: #1b5e20;">{{ registro.no_boleta }}</td>
+                                    <td class="text-center">{{ registro.fecha_labor|date:"d/m/Y" }}</td>
+                                    <td>{{ registro.tipo_servicio }}</td>
+                                    <td>{{ registro.proveedor }}</td>
+                                    <td class="text-center">{{ registro.codigo_maquina|default:"-" }}</td>
+                                    <td class="text-center">{{ registro.placa|default:"-" }}</td>
+                                    <td>{{ registro.operador|default:"-" }}</td>
+                                    <td>{{ registro.finca }}</td>
+                                    <td class="text-center">{{ registro.lote }}</td>
+                                    <td>{{ registro.actividad|default:"-" }}</td>
+                                    <td>{{ registro.labor|default:"-" }}</td>
+                                    <td class="text-right" style="font-family: monospace;">{{ registro.peso_kg|default:"-" }}</td>
+                                    <td class="text-center" style="color: #666; font-size: 0.78rem;">{{ registro.created_at|date:"d/m/Y H:i" }}</td>
+                                    <td class="text-center">
+                                        <div class="btn-acciones">
+                                            <a href="{% url 'editar_registro' registro.id %}" class="btn-editar" title="Editar registro">✏️ Editar</a>
+                                            <a href="{% url 'borrar_registro' registro.id %}" class="btn-eliminar" onclick="return confirm('¿Está seguro de que desea eliminar este registro ({{ registro.no_boleta }})? Esta acción no se puede deshacer.');" title="Eliminar registro">🗑️ Eliminar</a>
+                                        </div>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% for registro in registros %}
-                                    <tr>
-                                        <td>{{ registro.no_boleta }}</td>
-                                        <td>{{ registro.fecha_labor }}</td>
-                                        <td>{{ registro.tipo_servicio }}</td>
-                                        <td>{{ registro.proveedor }}</td>
-                                        <td>{{ registro.codigo_maquina }}</td>
-                                        <td>{{ registro.placa }}</td>
-                                        <td>{{ registro.operador }}</td>
-                                        <td>{{ registro.finca }}</td>
-                                        <td>{{ registro.lote }}</td>
-                                        <td>{{ registro.actividad }}</td>
-                                        <td>{{ registro.labor }}</td>
-                                        <td>{{ registro.peso_kg }}</td>
-                                        <td>{{ registro.created_at }}</td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="13">No hay registros operativos guardados.</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="14" class="text-center" style="padding: 20px; color: #666;">No hay registros operativos guardados.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="{% static 'js/notificaciones.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.querySelector('.messages');
+            if (messagesDiv) {
+                const alerts = messagesDiv.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    const isSuccess = alert.classList.contains('alert-success');
+                    const isFailed = alert.classList.contains('alert-failed');
+                    const message = alert.textContent.trim();
+                    
+                    if (isSuccess) {
+                        notifySystem.showSuccess('✓ ' + message, 4000);
+                    } else if (isFailed) {
+                        notifySystem.showError('✕ ' + message, 4000);
+                    } else {
+                        notifySystem.showInfo('ℹ ' + message, 4000);
+                    }
+                });
+                messagesDiv.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

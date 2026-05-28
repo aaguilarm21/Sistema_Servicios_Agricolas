@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo - Sistema de Notificaciones</title>
+  <link rel="stylesheet" href="Frontend/static/css/mensajes.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .container h1 {
+      color: #1b5e20;
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+    }
+
+    .container p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .demo-section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .demo-section:last-child {
+      border-bottom: none;
+    }
+
+    .demo-section h2 {
+      color: #2e7d32;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-success {
+      background: #2e7d32;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #1b5e20;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-error {
+      background: #c62828;
+      color: white;
+    }
+
+    .btn-error:hover {
+      background: #b71c1c;
+      box-shadow: 0 4px 12px rgba(198, 40, 40, 0.3);
+    }
+
+    .btn-warning {
+      background: #f57c00;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background: #e65100;
+      box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3);
+    }
+
+    .btn-info {
+      background: #1565c0;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #0d47a1;
+      box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .form-demo {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+      color: #1b5e20;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .note {
+      background: #e8f5e9;
+      border-left: 4px solid #2e7d32;
+      padding: 12px 15px;
+      border-radius: 4px;
+      color: #1b5e20;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .container h1 {
+        font-size: 1.5rem;
+      }
+
+      button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+      }
+
+      .button-group {
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌾 Sistema de Notificaciones</h1>
+    <p>Prueba todos los tipos de notificaciones y validaciones personalizadas</p>
+
+    <!-- Notificaciones Simples -->
+    <div class="demo-section">
+      <h2>📢 Notificaciones Simples</h2>
+      <div class="note">
+        Las notificaciones aparecen en la esquina superior derecha con auto-desaparición según el tipo
+      </div>
+      <div class="button-group">
+        <button class="btn-success" onclick="notifySystem.showSuccess('✓ ¡Éxito! Operación completada correctamente', 4000)">
+          Éxito (4s)
+        </button>
+        <button class="btn-error" onclick="notifySystem.showError('✕ Error: No se pudo guardar los datos', 5000)">
+          Error (5s)
+        </button>
+        <button class="btn-warning" onclick="notifySystem.showWarning('⚠ Advertencia: Este archivo ya existe', 4000)">
+          Advertencia (4s)
+        </button>
+        <button class="btn-info" onclick="notifySystem.showInfo('ℹ Información: Operación iniciada', 3000)">
+          Información (3s)
+        </button>
+      </div>
+    </div>
+
+    <!-- Validación de Formulario -->
+    <div class="demo-section">
+      <h2>✓ Validación de Formulario</h2>
+      <div class="note">
+        Los campos se validan en tiempo real y muestran mensajes personalizados
+      </div>
+      <form id="testForm" class="form-demo">
+        <div class="form-group">
+          <label for="username">Usuario (3-20 caracteres)</label>
+          <input type="text" id="username" placeholder="Ingresa tu usuario" name="username">
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="tu@email.com" name="email">
+        </div>
+        <div class="form-group">
+          <label for="phone">Teléfono</label>
+          <input type="tel" id="phone" placeholder="+502 7123-4567" name="phone">
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña (mín. 8 caracteres)</label>
+          <input type="password" id="password" placeholder="••••••••" name="password">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-success" onclick="validarFormularioDemo()">
+            Validar Formulario
+          </button>
+          <button type="button" class="btn-secondary" onclick="limpiarFormularioDemo()">
+            Limpiar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Validación Individual -->
+    <div class="demo-section">
+      <h2>🔍 Validación Individual</h2>
+      <div class="note">
+        Valida campos específicos mientras escribes
+      </div>
+      <div class="button-group">
+        <button class="btn-info" onclick="testEmailValidation()">
+          Probar Email: test@example.com
+        </button>
+        <button class="btn-info" onclick="testPhoneValidation()">
+          Probar Teléfono: +502 7123-4567
+        </button>
+        <button class="btn-warning" onclick="testInvalidEmail()">
+          Email Inválido: usuario@
+        </button>
+      </div>
+    </div>
+
+    <!-- Confirmación Modal -->
+    <div class="demo-section">
+      <h2>❓ Confirmación Modal</h2>
+      <div class="note">
+        Modal de confirmación con opciones personalizado según los colores del proyecto
+      </div>
+      <div class="button-group">
+        <button class="btn-error" onclick="mostrarConfirmacion()">
+          Mostrar Confirmación
+        </button>
+        <button class="btn-warning" onclick="mostrarConfirmacionEliminar()">
+          Confirmar Eliminación
+        </button>
+      </div>
+    </div>
+
+    <!-- Notificaciones Personalizadas -->
+    <div class="demo-section">
+      <h2>🎨 Notificaciones Personalizadas</h2>
+      <div class="note">
+        Ejemplos de casos reales de uso en la aplicación
+      </div>
+      <div class="button-group">
+        <button class="btn-success" onclick="usuarioCreado()">
+          Usuario Creado
+        </button>
+        <button class="btn-error" onclick="usuarioNoEncontrado()">
+          Usuario No Encontrado
+        </button>
+        <button class="btn-success" onclick="boletaGuardada()">
+          Boleta Guardada
+        </button>
+        <button class="btn-warning" onclick="camposRequeridos()">
+          Campos Requeridos
+        </button>
+        <button class="btn-info" onclick="buscandoUsuario()">
+          Buscando Usuario...
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="Frontend/static/js/notificaciones.js"></script>
+  <script>
+    function validarFormularioDemo() {
+      const form = document.getElementById('testForm');
+      const rules = {
+        username: [
+          { required: true },
+          { minLength: 3 },
+          { maxLength: 20 }
+        ],
+        email: [
+          { required: true },
+          { email: true }
+        ],
+        phone: [
+          { phone: true }
+        ],
+        password: [
+          { required: true },
+          { minLength: 8 }
+        ]
+      };
+
+      const errors = notifySystem.validateForm(form, rules);
+
+      if (Object.keys(errors).length === 0) {
+        notifySystem.showSuccess('✓ ¡Formulario válido! Todos los campos están correctos', 4000);
+      } else {
+        const firstError = Object.values(errors)[0];
+        notifySystem.showError('✕ ' + firstError, 4000);
+      }
+    }
+
+    function limpiarFormularioDemo() {
+      const form = document.getElementById('testForm');
+      const inputs = form.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.value = '';
+        notifySystem.clearFieldValidation(input);
+      });
+      notifySystem.showInfo('Formulario limpiado', 2000);
+    }
+
+    function testEmailValidation() {
+      const email = 'test@example.com';
+      if (notifySystem.isValidEmail(email)) {
+        notifySystem.showSuccess('✓ Email válido: ' + email, 3000);
+      } else {
+        notifySystem.showError('✕ Email inválido', 3000);
+      }
+    }
+
+    function testPhoneValidation() {
+      const phone = '+502 7123-4567';
+      if (notifySystem.isValidPhone(phone)) {
+        notifySystem.showSuccess('✓ Teléfono válido: ' + phone, 3000);
+      } else {
+        notifySystem.showError('✕ Teléfono inválido', 3000);
+      }
+    }
+
+    function testInvalidEmail() {
+      const email = 'usuario@';
+      if (notifySystem.isValidEmail(email)) {
+        notifySystem.showSuccess('✓ Email válido', 3000);
+      } else {
+        notifySystem.showError('✕ Email inválido: ' + email, 3000);
+      }
+    }
+
+    function mostrarConfirmacion() {
+      notifySystem.showConfirmation(
+        'Confirmar Acción',
+        '¿Deseas continuar con esta operación?',
+        function() {
+          notifySystem.showSuccess('✓ Acción confirmada', 3000);
+        },
+        function() {
+          notifySystem.showWarning('⚠ Acción cancelada', 2000);
+        }
+      );
+    }
+
+    function mostrarConfirmacionEliminar() {
+      notifySystem.showConfirmation(
+        'Eliminar Registro',
+        '¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.',
+        function() {
+          notifySystem.showSuccess('✓ Registro eliminado correctamente', 4000);
+        },
+        function() {
+          notifySystem.showInfo('Eliminación cancelada', 2000);
+        }
+      );
+    }
+
+    function usuarioCreado() {
+      notifySystem.showSuccess('✓ Usuario "jperez" creado correctamente\nGuarda tu contraseña en un lugar seguro', 5000);
+    }
+
+    function usuarioNoEncontrado() {
+      notifySystem.showError('✕ No se encontró un empleado con el código ingresado', 4000);
+    }
+
+    function boletaGuardada() {
+      notifySystem.showSuccess('✓ Boleta guardada correctamente\nNo. Boleta: BL-2025-001', 4000);
+    }
+
+    function camposRequeridos() {
+      notifySystem.showError('✕ Por favor completa los campos requeridos:\n• CUI del operador\n• Tipo de servicio\n• Proveedor', 5000);
+    }
+
+    function buscandoUsuario() {
+      notifySystem.showInfo('Buscando usuario...', 0);
+      setTimeout(() => {
+        notifySystem.closeNotification(document.querySelector('.notification-info'));
+        notifySystem.showSuccess('✓ Usuario encontrado: Juan Pérez', 3000);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

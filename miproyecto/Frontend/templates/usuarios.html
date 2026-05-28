@@ -7,6 +7,7 @@
   <title>Módulo de Usuarios</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/mensajes.css' %}" />
   <style>
     .modal {
       display: none;
@@ -114,6 +115,7 @@
   </div>
 
   <script src="{% static 'js/usuarios.js' %}"></script>
+  <script src="{% static 'js/notificaciones.js' %}"></script>
   <script>
     // Obtener elementos del DOM
     const codigoInput = document.getElementById('codigoUsuario');
@@ -147,9 +149,14 @@
       const codigo = codigoInput.value.trim();
 
       // Limpiar mensajes previos
-      errorMessage.style.display = 'none';
-      successMessage.style.display = 'none';
-      errorMessage.textContent = '';
+      if (errorMessage) {
+        errorMessage.style.display = 'none';
+        errorMessage.textContent = '';
+      }
+      if (successMessage) {
+        successMessage.style.display = 'none';
+        successMessage.textContent = '';
+      }
 
       if (!codigo) {
         limpiarCampos();
@@ -157,38 +164,36 @@
       }
 
       // Mostrar indicador de carga
-      loadingIndicator.style.display = 'block';
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'block';
+      }
 
       // Realizar solicitud AJAX
       fetch(`/accounts/api/buscar-usuario/?codigo=${encodeURIComponent(codigo)}`)
         .then(response => response.json())
         .then(data => {
-          loadingIndicator.style.display = 'none';
+          if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+          }
 
           if (data.success) {
             // Mostrar datos del usuario
             nombreDisplay.textContent = data.nombre;
             puestoDisplay.textContent = data.puesto;
             emailInput.value = data.email;
-            successMessage.style.display = 'block';
-            successMessage.textContent = 'Usuario encontrado ✓';
-
-            // Limpiar mensaje después de 3 segundos
-            setTimeout(() => {
-              successMessage.style.display = 'none';
-            }, 3000);
+            notifySystem.showSuccess('✓ Usuario encontrado correctamente', 3000);
           } else {
             // Usuario no encontrado
             limpiarCampos();
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = data.error || 'Usuario no encontrado';
+            notifySystem.showError(data.error || 'Usuario no encontrado', 4000);
           }
         })
         .catch(error => {
-          loadingIndicator.style.display = 'none';
+          if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+          }
           console.error('Error:', error);
-          errorMessage.style.display = 'block';
-          errorMessage.textContent = 'Error en la búsqueda';
+          notifySystem.showError('Error al buscar el usuario. Verifica tu conexión.', 4000);
           limpiarCampos();
         });
     }
@@ -205,9 +210,15 @@
     function limpiarFormulario() {
       codigoInput.value = '';
       limpiarCampos();
-      errorMessage.style.display = 'none';
-      successMessage.style.display = 'none';
-      loadingIndicator.style.display = 'none';
+      if (errorMessage) {
+        errorMessage.style.display = 'none';
+      }
+      if (successMessage) {
+        successMessage.style.display = 'none';
+      }
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+      }
     }
 
     // Crear usuario
@@ -222,32 +233,37 @@
 
       // Validaciones
       if (codigo === '') {
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Debes ingresar un código';
+        notifySystem.showError('⚠ Debes ingresar un código', 4000);
         return;
       }
 
       if (nombre === '-' || puesto === '-') {
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Debes buscar un usuario válido primero';
+        notifySystem.showError('⚠ Debes buscar un usuario válido primero', 4000);
         return;
       }
 
       if (email === '') {
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Debes ingresar un email';
+        notifySystem.showError('⚠ Debes ingresar un email válido', 4000);
+        return;
+      }
+
+      if (!notifySystem.isValidEmail(email)) {
+        notifySystem.showError('⚠ El email no es válido', 4000);
         return;
       }
 
       if (password === '') {
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Debes ingresar una contraseña';
+        notifySystem.showError('⚠ Debes ingresar una contraseña', 4000);
+        return;
+      }
+
+      if (password.length < 8) {
+        notifySystem.showError('⚠ La contraseña debe tener al menos 8 caracteres', 4000);
         return;
       }
 
       if (rol === 'Seleccionar') {
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Debes seleccionar un rol';
+        notifySystem.showError('⚠ Debes seleccionar un rol', 4000);
         return;
       }
 
@@ -275,25 +291,21 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            successMessage.style.display = 'block';
-            successMessage.textContent = data.message;
+            notifySystem.showSuccess('✓ ' + data.message, 3000);
             showModal(data.username, data.password, 'Guarda esta información y no compartas tu contraseña con nadie.');
             setTimeout(() => {
               hideModal();
             }, 10000);
             setTimeout(() => {
               limpiarFormulario();
-              successMessage.style.display = 'none';
             }, 3000);
           } else {
-            errorMessage.style.display = 'block';
-            errorMessage.textContent = data.error || 'No se pudo crear el usuario.';
+            notifySystem.showError('✕ ' + (data.error || 'No se pudo crear el usuario'), 4000);
           }
         })
         .catch(error => {
           console.error('Error al crear usuario:', error);
-          errorMessage.style.display = 'block';
-          errorMessage.textContent = 'Error al crear el usuario.';
+          notifySystem.showError('✕ Error al crear el usuario. Verifica tu conexión.', 4000);
         });
     });
 

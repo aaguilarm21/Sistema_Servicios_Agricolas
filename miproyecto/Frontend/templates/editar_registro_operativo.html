@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registros Operativos</title>
+    <title>Editar Registro Operativo</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/registros.css' %}">
     <link rel="stylesheet" href="{% static 'css/mensajes.css' %}">
@@ -12,10 +12,10 @@
     <div class="main-container">
         <div class="header">
             <div>
-                <h1>📝 Registros Operativos</h1>
-                <p>Ingrese los detalles de la boleta de servicio</p>
+                <h1>✏️ Editar Registro Operativo</h1>
+                <p>Modifique los detalles de la boleta #{{ registro.no_boleta }}</p>
             </div>
-            <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+            <a href="{% url 'registros_data' %}" class="btn-volver">Volver a Registros</a>
         </div>
 
         <div class="form-wrapper">
@@ -27,7 +27,7 @@
                 </div>
             {% endif %}
 
-            <form method="post" action="{% url 'registros' %}">
+            <form method="post">
                 {% csrf_token %}
 
                 <!-- ENCABEZADO -->
@@ -36,23 +36,23 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="no_boleta">No. Boleta</label>
-                            <input type="text" id="no_boleta" name="no_boleta" class="highlight" required>
+                            <input type="text" id="no_boleta" name="no_boleta" class="highlight" value="{{ registro.no_boleta }}" required>
                         </div>
                         <div class="form-group">
                             <label for="fecha_labor">Fecha Labor</label>
-                            <input type="date" id="fecha_labor" name="fecha_labor" required>
+                            <input type="date" id="fecha_labor" name="fecha_labor" value="{{ registro.fecha_labor|date:'Y-m-d' }}" required>
                         </div>
                         <div class="form-group">
                             <label for="tipo_servicio">Tipo Servicio</label>
                             <select id="tipo_servicio" name="tipo_servicio" required>
                                 <option value="">Seleccionar</option>
-                                <option value="Aplicaciones aereas">Aplicaciones aereas</option>
-                                <option value="Envio de semilla de caña">Envio de semilla de caña</option>
-                                <option value="Maquinaria rentada">Maquinaria rentada</option>
-                                <option value="Servicio contratado">Servicio contratado</option>
-                                <option value="Servicios de pinchazo">Servicios de pinchazo</option>
-                                <option value="Transporte de personal">Transporte de personal</option>
-                                <option value="Viajes de material o maquinaria">Viajes de material o maquinaria</option>
+                                <option value="Aplicaciones aereas" {% if registro.tipo_servicio == "Aplicaciones aereas" %}selected{% endif %}>Aplicaciones aereas</option>
+                                <option value="Envio de semilla de caña" {% if registro.tipo_servicio == "Envio de semilla de caña" %}selected{% endif %}>Envio de semilla de caña</option>
+                                <option value="Maquinaria rentada" {% if registro.tipo_servicio == "Maquinaria rentada" %}selected{% endif %}>Maquinaria rentada</option>
+                                <option value="Servicio contratado" {% if registro.tipo_servicio == "Servicio contratado" %}selected{% endif %}>Servicio contratado</option>
+                                <option value="Servicios de pinchazo" {% if registro.tipo_servicio == "Servicios de pinchazo" %}selected{% endif %}>Servicios de pinchazo</option>
+                                <option value="Transporte de personal" {% if registro.tipo_servicio == "Transporte de personal" %}selected{% endif %}>Transporte de personal</option>
+                                <option value="Viajes de material o maquinaria" {% if registro.tipo_servicio == "Viajes de material o maquinaria" %}selected{% endif %}>Viajes de material o maquinaria</option>
                             </select>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                             <select id="proveedor" name="proveedor" required>
                                 <option value="">Seleccionar Proveedor</option>
                                 {% for prov in proveedores %}
-                                <option value="{{ prov.razon_social }}">{{ prov.codigo }} - {{ prov.razon_social }}</option>
+                                <option value="{{ prov.razon_social }}" {% if registro.proveedor == prov.razon_social %}selected{% endif %}>{{ prov.codigo }} - {{ prov.razon_social }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -76,23 +76,23 @@
                             <select id="codigo_maquina" name="codigo_maquina">
                                 <option value="">Seleccionar Máquina</option>
                                 {% for maq in maquinarias %}
-                                <option value="{{ maq.codigo_maquina }}" data-placa="{{ maq.placa_matricula|default:'' }}">{{ maq.codigo_maquina }} - {{ maq.tipo_maquina }}</option>
+                                <option value="{{ maq.codigo_maquina }}" data-placa="{{ maq.placa_matricula|default:'' }}" {% if registro.codigo_maquina == maq.codigo_maquina %}selected{% endif %}>{{ maq.codigo_maquina }} - {{ maq.tipo_maquina }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="placa">Placa</label>
-                            <input type="text" id="placa" name="placa">
+                            <input type="text" id="placa" name="placa" value="{{ registro.placa }}">
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_operador">Código Operador</label>
-                            <input type="text" id="codigo_operador" placeholder="Ingrese el código y presione Enter o Tab">
+                            <input type="text" id="codigo_operador" placeholder="Ingrese el código y presione Enter o Tab" value="{{ registro.operador }}">
                         </div>
                         <div class="form-group">
                             <label for="operador">Operador (Nombre)</label>
-                            <input type="text" id="operador" name="operador" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="operador" name="operador" readonly style="background-color: #f5f5f5;" value="{{ registro.operador }}">
                         </div>
                     </div>
                 </div>
@@ -106,31 +106,31 @@
                             <select id="finca" name="finca" required>
                                 <option value="">Seleccionar Finca</option>
                                 {% for f in fincas %}
-                                <option value="{{ f.nombre }}">{{ f.codigo }} - {{ f.nombre }}</option>
+                                <option value="{{ f.nombre }}" {% if registro.finca == f.nombre %}selected{% endif %}>{{ f.codigo }} - {{ f.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="lote">Caña | Lote</label>
-                            <input type="text" id="lote" name="lote" required>
+                            <input type="text" id="lote" name="lote" value="{{ registro.lote }}" required>
                         </div>
                         <div class="form-group">
                             <label for="area_lote">Área Lote (Ha)</label>
-                            <input type="number" id="area_lote" name="area_lote" step="0.01">
+                            <input type="number" id="area_lote" name="area_lote" step="0.01" value="{{ registro.area_lote|default:'' }}">
                         </div>
                     </div>
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="codigo_labor">Código Labor</label>
-                            <input type="text" id="codigo_labor" placeholder="Ingrese código">
+                            <input type="text" id="codigo_labor" placeholder="Ingrese código" value="{{ registro.labor|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="labor">Labor (Nombre)</label>
-                            <input type="text" id="labor" name="labor" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="labor" name="labor" readonly style="background-color: #f5f5f5;" value="{{ registro.labor|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="corte_semilla">Lote Corte Semilla (Si=1 No=2)</label>
-                            <input type="text" id="corte_semilla" name="corte_semilla" placeholder="1 o 2">
+                            <input type="text" id="corte_semilla" name="corte_semilla" placeholder="1 o 2" value="{{ registro.corte_semilla|default:'' }}">
                         </div>
                     </div>
                 </div>
@@ -141,29 +141,29 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="unidades">Unidades</label>
-                            <input type="number" id="unidades" name="unidades" step="0.01">
+                            <input type="number" id="unidades" name="unidades" step="0.01" value="{{ registro.unidades|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="horometro_inicial">Horómetros Inicial</label>
-                            <input type="number" id="horometro_inicial" name="horometro_inicial" step="0.01">
+                            <input type="number" id="horometro_inicial" name="horometro_inicial" step="0.01" value="{{ registro.horometro_inicial|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="horometro_final">Horómetros Final</label>
-                            <input type="number" id="horometro_final" name="horometro_final" step="0.01">
+                            <input type="number" id="horometro_final" name="horometro_final" step="0.01" value="{{ registro.horometro_final|default:'' }}">
                         </div>
                     </div>
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="costo_unitario">Costo Unitario</label>
-                            <input type="number" id="costo_unitario" name="costo_unitario" step="0.01">
+                            <input type="number" id="costo_unitario" name="costo_unitario" step="0.01" value="{{ registro.costo_unitario|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="num_factura">No. Factura</label>
-                            <input type="text" id="num_factura" name="num_factura">
+                            <input type="text" id="num_factura" name="num_factura" value="{{ registro.num_factura|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="cuenta_contable">Cuenta Contable</label>
-                            <input type="text" id="cuenta_contable" name="cuenta_contable">
+                            <input type="text" id="cuenta_contable" name="cuenta_contable" value="{{ registro.cuenta_contable|default:'' }}">
                         </div>
                     </div>
                 </div>
@@ -177,17 +177,17 @@
                             <select id="variedad" name="variedad">
                                 <option value="">Seleccionar Variedad</option>
                                 {% for var in variedades %}
-                                <option value="{{ var.descripcion }}">{{ var.codigo }} - {{ var.descripcion }}</option>
+                                <option value="{{ var.descripcion }}" {% if registro.variedad == var.descripcion %}selected{% endif %}>{{ var.codigo }} - {{ var.descripcion }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="total_paquetes">Total Paq/Cajas</label>
-                            <input type="number" id="total_paquetes" name="total_paquetes">
+                            <input type="number" id="total_paquetes" name="total_paquetes" value="{{ registro.total_paquetes|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="peso_kg">Peso Kg</label>
-                            <input type="number" id="peso_kg" name="peso_kg" step="0.01">
+                            <input type="number" id="peso_kg" name="peso_kg" step="0.01" value="{{ registro.peso_kg|default:'' }}">
                         </div>
                     </div>
                 </div>
@@ -198,31 +198,31 @@
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_caporal_01">Código Supervisor 1</label>
-                            <input type="text" id="codigo_caporal_01" placeholder="Ingrese código">
+                            <input type="text" id="codigo_caporal_01" placeholder="Ingrese código" value="{{ registro.caporal_01|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="caporal_01">Supervisor 1 (Nombre)</label>
-                            <input type="text" id="caporal_01" name="caporal_01" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="caporal_01" name="caporal_01" readonly style="background-color: #f5f5f5;" value="{{ registro.caporal_01|default:'' }}">
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_caporal_02">Código Supervisor 2</label>
-                            <input type="text" id="codigo_caporal_02" placeholder="Ingrese código">
+                            <input type="text" id="codigo_caporal_02" placeholder="Ingrese código" value="{{ registro.caporal_02|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="caporal_02">Supervisor 2 (Nombre)</label>
-                            <input type="text" id="caporal_02" name="caporal_02" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="caporal_02" name="caporal_02" readonly style="background-color: #f5f5f5;" value="{{ registro.caporal_02|default:'' }}">
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_mayordomo">Código Supervisor 3</label>
-                            <input type="text" id="codigo_mayordomo" placeholder="Ingrese código">
+                            <input type="text" id="codigo_mayordomo" placeholder="Ingrese código" value="{{ registro.mayordomo|default:'' }}">
                         </div>
                         <div class="form-group">
                             <label for="mayordomo">Supervisor 3 (Nombre)</label>
-                            <input type="text" id="mayordomo" name="mayordomo" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="mayordomo" name="mayordomo" readonly style="background-color: #f5f5f5;" value="{{ registro.mayordomo|default:'' }}">
                         </div>
                     </div>
                 </div>
@@ -236,7 +236,7 @@
                             <select id="lugar_origen" name="lugar_origen">
                                 <option value="">Seleccionar Municipio</option>
                                 {% for m in municipios %}
-                                <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
+                                <option value="{{ m.nombre }}" {% if registro.lugar_origen == m.nombre %}selected{% endif %}>{{ m.codigo }} - {{ m.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -245,7 +245,7 @@
                             <select id="lugar_destino" name="lugar_destino">
                                 <option value="">Seleccionar Municipio</option>
                                 {% for m in municipios %}
-                                <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
+                                <option value="{{ m.nombre }}" {% if registro.lugar_destino == m.nombre %}selected{% endif %}>{{ m.codigo }} - {{ m.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -258,15 +258,15 @@
                     <div class="form-row full">
                         <div class="form-group">
                             <label for="observaciones">Notas Adicionales</label>
-                            <textarea id="observaciones" name="observaciones" placeholder="Escriba aquí cualquier comentario o nota importante..."></textarea>
+                            <textarea id="observaciones" name="observaciones" placeholder="Escriba aquí cualquier comentario o nota importante...">{{ registro.observaciones|default:'' }}</textarea>
                         </div>
                     </div>
                 </div>
 
                 <!-- BOTONES DE ACCIÓN -->
                 <div class="button-group">
-                    <button type="submit" class="btn-primary">💾 Guardar Boleta</button>
-                    <button type="button" class="btn-secondary" onclick="limpiarFormulario()">🔄 Limpiar</button>
+                    <button type="submit" class="btn-primary">💾 Guardar Cambios</button>
+                    <a href="{% url 'registros_data' %}" class="btn-secondary" style="text-align: center; text-decoration: none; padding: 11px 24px; border: 1px solid #c8e6c9;">❌ Cancelar</a>
                 </div>
             </form>
         </div>
@@ -335,26 +335,10 @@
                     }
                 });
             }
-
-            const inputNumFactura = document.getElementById('num_factura');
-            if (inputNumFactura) {
-                inputNumFactura.addEventListener('blur', function() {
-                    if (!this.value.trim()) {
-                        this.value = 'Ninguna';
-                    }
-                });
-            }
         });
-
-        function limpiarFormulario() {
-            if (confirm('¿Desea limpiar todos los datos del formulario?')) {
-                document.querySelector('form').reset();
-            }
-        }
     </script>
     <script src="{% static 'js/notificaciones.js' %}"></script>
     <script>
-        // Mostrar notificaciones personalizadas para mensajes de Django
         document.addEventListener('DOMContentLoaded', function() {
             const messagesDiv = document.querySelector('.messages');
             if (messagesDiv) {

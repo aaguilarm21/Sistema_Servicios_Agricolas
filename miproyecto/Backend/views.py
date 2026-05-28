@@ -111,6 +111,88 @@ def registros_operativos_data(request):
 
 
 @login_required
+def editar_registro_operativo(request, registro_id):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    
+    try:
+        registro = RegistroOperativo.objects.get(id=registro_id)
+    except RegistroOperativo.DoesNotExist:
+        messages.error(request, 'El registro no existe.')
+        return redirect('registros_data')
+    
+    if request.method == 'POST':
+        registro.no_boleta = request.POST.get('no_boleta', '').strip() or registro.no_boleta
+        registro.fecha_labor = request.POST.get('fecha_labor') or registro.fecha_labor
+        registro.tipo_servicio = request.POST.get('tipo_servicio', '').strip() or registro.tipo_servicio
+        registro.proveedor = request.POST.get('proveedor', '').strip() or registro.proveedor
+        registro.codigo_maquina = request.POST.get('codigo_maquina', '').strip() or None
+        registro.placa = request.POST.get('placa', '').strip() or None
+        registro.operador = request.POST.get('operador', '').strip() or None
+        registro.finca = request.POST.get('finca', '').strip() or registro.finca
+        registro.lote = request.POST.get('lote', '').strip() or registro.lote
+        registro.area_lote = request.POST.get('area_lote') or None
+        registro.actividad = request.POST.get('actividad', '').strip() or None
+        registro.labor = request.POST.get('labor', '').strip() or None
+        registro.corte_semilla = request.POST.get('corte_semilla', '').strip() or None
+        registro.unidades = request.POST.get('unidades') or None
+        registro.horometro_inicial = request.POST.get('horometro_inicial') or None
+        registro.horometro_final = request.POST.get('horometro_final') or None
+        registro.costo_unitario = request.POST.get('costo_unitario') or None
+        registro.num_factura = request.POST.get('num_factura', '').strip() or None
+        registro.cuenta_contable = request.POST.get('cuenta_contable', '').strip() or None
+        registro.variedad = request.POST.get('variedad', '').strip() or None
+        registro.total_paquetes = request.POST.get('total_paquetes') or None
+        registro.peso_kg = request.POST.get('peso_kg') or None
+        registro.caporal_01 = request.POST.get('caporal_01', '').strip() or None
+        registro.caporal_02 = request.POST.get('caporal_02', '').strip() or None
+        registro.mayordomo = request.POST.get('mayordomo', '').strip() or None
+        registro.administrador = request.POST.get('administrador', '').strip() or None
+        registro.lugar_origen = request.POST.get('lugar_origen', '').strip() or None
+        registro.lugar_destino = request.POST.get('lugar_destino', '').strip() or None
+        registro.observaciones = request.POST.get('observaciones', '').strip() or None
+        
+        registro.save()
+        messages.success(request, 'Registro actualizado correctamente.')
+        return redirect('registros_data')
+    
+    proveedores = Proveedor.objects.all().order_by('razon_social')
+    maquinarias = Maquinaria.objects.all().order_by('codigo_maquina')
+    fincas = Auxiliar.objects.filter(tipo__icontains='finca').order_by('nombre')
+    labores = Labor.objects.all().order_by('codigo')
+    variedades = Variedad.objects.all().order_by('descripcion')
+    municipios = Municipio.objects.all().order_by('nombre')
+    
+    return render(request, 'editar_registro_operativo.html', {
+        'registro': registro,
+        'proveedores': proveedores,
+        'maquinarias': maquinarias,
+        'fincas': fincas,
+        'labores': labores,
+        'variedades': variedades,
+        'municipios': municipios,
+    })
+
+
+@login_required
+def borrar_registro_operativo(request, registro_id):
+    if not user_is_admin(request.user):
+        messages.warning(request, 'No tienes permisos para acceder a este módulo.')
+        return redirect('modulos')
+    
+    try:
+        registro = RegistroOperativo.objects.get(id=registro_id)
+        boleta_numero = registro.no_boleta
+        registro.delete()
+        messages.success(request, f'Registro de boleta "{boleta_numero}" eliminado correctamente.')
+    except RegistroOperativo.DoesNotExist:
+        messages.error(request, 'El registro no existe.')
+    
+    return redirect('registros_data')
+
+
+@login_required
 def usuarios(request):
     if not user_is_admin(request.user):
         messages.warning(request, 'No tienes permisos para acceder a este módulo.')

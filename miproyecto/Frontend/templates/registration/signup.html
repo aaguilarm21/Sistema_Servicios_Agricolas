@@ -6,6 +6,7 @@
   <title>Crear usuario</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/mensajes.css' %}" />
 </head>
 <body>
   <main class="login-page">
@@ -13,7 +14,7 @@
       <h1>Crear un nuevo usuario</h1>
 
       {% if mensaje %}
-        <div class="alert">{{ mensaje }}</div>
+        <div class="success-message" style="display: block;">✓ {{ mensaje }}</div>
       {% endif %}
 
       <form method="post" action="." id="signupForm">
@@ -128,5 +129,6 @@
       </script>
     </section>
   </main>
+  <script src="{% static 'js/notificaciones.js' %}"></script>
 </body>
 </html>
