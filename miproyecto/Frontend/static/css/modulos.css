@@ -174,7 +174,8 @@ header p {
   letter-spacing: 0.02em;
   transition: all 0.2s ease;
   outline: none;
-  width: auto; /* ajustar al contenido */
+  width: 100%;
+  box-sizing: border-box;
   min-height: 48px;
   white-space: normal;
   text-decoration: none;
@@ -185,12 +186,15 @@ header p {
     flex-direction: column;
     align-items: stretch;
   }
+
   .module-btn {
     width: 100%;
+    box-sizing: border-box;
     justify-content: flex-start;
     padding: 12px 14px;
     font-size: 0.95rem;
   }
+
   .modules-list {
     padding: 10px 12px;
     max-width: 100%;
@@ -198,8 +202,17 @@ header p {
 }
 
 /* Clases utilitarias para ajustar tamaño rápido */
-.modules-list.compact .module-btn { padding: 8px 10px; font-size: 0.9rem; min-height: 42px; }
-.modules-list.large   .module-btn { padding: 14px 18px; font-size: 1.05rem; min-height: 56px; }
+.modules-list.compact .module-btn {
+  padding: 8px 10px;
+  font-size: 0.9rem;
+  min-height: 42px;
+}
+
+.modules-list.large .module-btn {
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  min-height: 56px;
+}
 
 .module-btn .icon {
   font-size: 1.25em;
@@ -1181,17 +1194,17 @@ textarea {
 }
 
 .btn-volver {
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
   background: #2e7d32;
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 12px 24px;
   border: 2px solid transparent;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: all 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   white-space: nowrap;
@@ -1201,11 +1214,6 @@ textarea {
   background: #1b5e20;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.btn-volver::before {
-  content: '←';
-  font-size: 1.1rem;
 }
 
 /* ==================== CATÁLOGOS AUXILIARES - LAYOUT DOS PANELES ==================== */
