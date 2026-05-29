@@ -14,9 +14,9 @@
     <header>
       <div>
         <h1>Configuración y Catálogos</h1>
-        <p>Elige un submódulo y gestiona tus datos.</p>
+        <p>Elige Un Submódulo Y Gestiona Tus Datos.</p>
       </div>
-      <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+      <a href="{% url 'modulos' %}" class="btn-volver">Volver A Módulos</a>
     </header>
 
     <div class="tabs">
@@ -29,7 +29,7 @@
       <div class="catalogos-layout">
         <!-- Panel izquierdo: lista de configuraciones -->
         <div class="catalogos-sidebar">
-          <div class="sidebar-title">Selecciona una configuración</div>
+          <div class="sidebar-title">Selecciona Una Configuración</div>
           <ul class="catalogo-menu">
             <li class="catalogo-item active" data-config="proveedores">
               <span class="cat-icon">🏢</span> Proveedores
@@ -62,10 +62,10 @@
               <!-- Se llenará dinámicamente -->
             </div>
             <div class="button-row">
-              <button id="cfg-btn-guardar" class="btn">Guardar</button>
-              <button id="cfg-btn-modificar" class="btn btn-secondary" disabled>Modificar</button>
-              <button id="cfg-btn-eliminar" class="btn btn-secondary" disabled>Eliminar</button>
-              <button id="cfg-btn-limpiar" class="btn btn-secondary">Limpiar</button>
+              <button id="cfg-btn-guardar" class="btn-primary">💾 Guardar</button>
+              <button id="cfg-btn-modificar" class="btn-secondary" disabled>✏️ Modificar</button>
+              <button id="cfg-btn-eliminar" class="btn-secondary" disabled>🗑️ Eliminar</button>
+              <button id="cfg-btn-limpiar" class="btn-secondary">🔄 Limpiar</button>
             </div>
           </div>
 
@@ -90,7 +90,7 @@
 
         <!-- Panel izquierdo: lista de catálogos -->
         <div class="catalogos-sidebar">
-          <div class="sidebar-title">Selecciona un catálogo</div>
+          <div class="sidebar-title">Selecciona Un Catálogo</div>
           <ul class="catalogo-menu">
             <li class="catalogo-item active" data-catalogo="labores">
               <span class="cat-icon">🌾</span> Labores
@@ -105,7 +105,7 @@
               <span class="cat-icon">🌿</span> Variedades
             </li>
             <li class="catalogo-item" data-catalogo="tipos-maquina">
-              <span class="cat-icon">🚜</span> Tipo de Máquina
+              <span class="cat-icon">🚜</span> Tipo De Máquina
             </li>
             <li class="catalogo-item" data-catalogo="marcas">
               <span class="cat-icon">🏷️</span> Marca
@@ -131,14 +131,13 @@
             <div class="form-grid" id="cat-form-grid">
               <label>Código<input type="text" id="cat-codigo" autocomplete="off" /></label>
               <label id="cat-label-campo2">Descripción<input type="text" id="cat-campo2" autocomplete="off" /></label>
-              <label id="cat-label-campo3">Tipo<input type="text" id="cat-campo3"
-                  autocomplete="off" /></label>
+              <label id="cat-label-campo3">Tipo<input type="text" id="cat-campo3" autocomplete="off" /></label>
             </div>
             <div class="button-row">
-              <button id="cat-btn-guardar" class="btn">Guardar</button>
-              <button id="cat-btn-modificar" class="btn btn-secondary" disabled>Modificar</button>
-              <button id="cat-btn-eliminar" class="btn btn-secondary" disabled>Eliminar</button>
-              <button id="cat-btn-limpiar" class="btn btn-secondary">Limpiar</button>
+              <button id="cat-btn-guardar" class="btn-primary">💾 Guardar</button>
+              <button id="cat-btn-modificar" class="btn-secondary" disabled>✏️ Modificar</button>
+              <button id="cat-btn-eliminar" class="btn-secondary" disabled>🗑️ Eliminar</button>
+              <button id="cat-btn-limpiar" class="btn-secondary">🔄 Limpiar</button>
             </div>
           </div>
 
@@ -195,7 +194,7 @@
           { id: 'diasCredito', label: 'Días Crédito', tipo: 'text', requerido: false }
         ],
         cols: ['Código', 'Proveedor', 'NIT', 'Régimen', 'Contacto'],
-        getRow: r => [r.codigo, r.razon_social, r.nit, r.regimen_tributario || '', r.nombre_propietario || ''],
+        getRow: r => [r.codigo, r.razon_social, r.nit, r.regimen_tributario || 'Ninguno', r.nombre_propietario || 'Ninguno'],
         setData: (form) => ({
           codigo: form.codigo.value,
           razonSocial: form.razonSocial.value,
@@ -223,14 +222,14 @@
           { id: 'codigo_maquina', label: 'Código Máquina', tipo: 'text', requerido: true },
           { id: 'combustible', label: 'Combustible S/N', tipo: 'select', opciones: ['Seleccionar', 'Si', 'No'], requerido: false },
           { id: 'id_proveedor', label: 'ID Proveedor', tipo: 'text', requerido: false },
-          { id: 'tipo_maquina', label: 'Tipo Máquina', tipo: 'text', requerido: true },
-          { id: 'marca_maquina', label: 'Marca Máquina', tipo: 'text', requerido: false },
+          { id: 'tipo_maquina', label: 'Tipo Máquina', tipo: 'select_api', apiUrl: '/accounts/api/tipos-maquina/', campoValor: 'descripcion', requerido: true },
+          { id: 'marca_maquina', label: 'Marca Máquina', tipo: 'select_api', apiUrl: '/accounts/api/marcas/', campoValor: 'descripcion', requerido: false },
           { id: 'serie_maquina', label: 'Serie Máquina', tipo: 'text', requerido: false },
-          { id: 'placa_matricula', label: 'Placa o Matrícula', tipo: 'text', requerido: false },
+          { id: 'placa_matricula', label: 'Placa O Matrícula', tipo: 'text', requerido: false },
           { id: 'observaciones', label: 'Observaciones', tipo: 'textarea', requerido: false }
         ],
         cols: ['Código', 'Tipo', 'Marca', 'Serie', 'Placa'],
-        getRow: r => [r.codigo_maquina, r.tipo_maquina, r.marca_maquina || '', r.serie_maquina || '', r.placa_matricula || ''],
+        getRow: r => [r.codigo_maquina, r.tipo_maquina, r.marca_maquina || 'Ninguno', r.serie_maquina || 'Ninguno', r.placa_matricula || 'Ninguno'],
         setData: (form) => ({
           codigo_maquina: form.codigo_maquina.value,
           combustible: form.combustible.value,
@@ -259,12 +258,12 @@
         campos: [
           { id: 'codigo', label: 'Código', tipo: 'text', requerido: true },
           { id: 'nombre_bodega', label: 'Nombre Bodega', tipo: 'text', requerido: true },
-          { id: 'unidad_medida', label: 'Unidad Medida', tipo: 'text', requerido: false },
+          { id: 'unidad_medida', label: 'Unidad De Medida', tipo: 'select_api', apiUrl: '/accounts/api/unidades/', campoValor: 'descripcion', requerido: false },
           { id: 'capacidad', label: 'Capacidad', tipo: 'text', requerido: false },
           { id: 'observaciones', label: 'Observaciones', tipo: 'text', requerido: false }
         ],
-        cols: ['No.', 'Bodega', 'Nombre Bodega', 'UM', 'Capacidad', 'Observaciones'],
-        getRow: (r, idx) => [idx + 1, r.codigo, r.nombre_bodega, r.unidad_medida || '', r.capacidad || '', r.observaciones || ''],
+        cols: ['No.', 'Bodega', 'Nombre Bodega', 'Unidad De Medida', 'Capacidad', 'Observaciones'],
+        getRow: (r, idx) => [idx + 1, r.codigo, r.nombre_bodega, r.unidad_medida || 'Ninguno', r.capacidad || 'Ninguno', r.observaciones || 'Ninguno'],
         setData: (form) => ({
           codigo: form.codigo.value,
           nombre_bodega: form.nombre_bodega.value,
@@ -285,27 +284,24 @@
         icono: '📋',
         api: '/accounts/api/articulos/',
         campos: [
-          { id: 'codigo_articulo', label: 'Código artículo', tipo: 'text', requerido: true },
+          { id: 'codigo_articulo', label: 'Código Artículo', tipo: 'text', requerido: true },
           { id: 'descripcion', label: 'Descripción', tipo: 'text', requerido: true },
-          { id: 'unidad_medida', label: 'Unidad de Medida', tipo: 'text', requerido: false },
-          { id: 'categoria', label: 'Categoría', tipo: 'text', requerido: false },
-          { id: 'stock', label: 'Stock', tipo: 'number', requerido: false }
+          { id: 'unidad_medida', label: 'Unidad De Medida', tipo: 'select_api', apiUrl: '/accounts/api/unidades/', campoValor: 'descripcion', requerido: false },
+          { id: 'categoria', label: 'Categoría', tipo: 'select', opciones: ['Seleccionar', 'Fertilizante', 'Herbicida', 'Insecticida', 'Fungicida', 'Semilla', 'Herramienta', 'Repuesto', 'Combustible', 'Otro'], requerido: false }
         ],
-        cols: ['Código', 'Descripción', 'Unidad de Medida', 'Categoría', 'Stock'],
-        getRow: r => [r.codigo_articulo, r.descripcion, r.unidad_medida || '', r.categoria || '', r.stock || 0],
+        cols: ['Código', 'Descripción', 'Unidad De Medida', 'Categoría'],
+        getRow: r => [r.codigo_articulo, r.descripcion, r.unidad_medida || 'Ninguno', r.categoria || 'Ninguno'],
         setData: (form) => ({
           codigo_articulo: form.codigo_articulo.value,
           descripcion: form.descripcion.value,
           unidad_medida: form.unidad_medida.value,
-          categoria: form.categoria.value,
-          stock: form.stock.value || 0
+          categoria: form.categoria.value
         }),
         setRow: (r, form) => {
           form.codigo_articulo.value = r.codigo_articulo;
           form.descripcion.value = r.descripcion;
           form.unidad_medida.value = r.unidad_medida || '';
-          form.categoria.value = r.categoria || '';
-          form.stock.value = r.stock || '';
+          form.categoria.value = r.categoria || 'Seleccionar';
         }
       },
       'empleados': {
@@ -320,13 +316,13 @@
           { id: 'nombre_puesto', label: 'Nombre Puesto', tipo: 'text', requerido: false }
         ],
         cols: ['No.', 'Empresa', 'Código', 'Empleado', 'No. CUI', 'Nombre Puesto'],
-        getRow: (r, idx) => [idx + 1, r.empresa, r.puesto, r.empleado, r.no_cui, r.nombre_puesto || ''],
+        getRow: (r, idx) => [idx + 1, r.empresa, r.puesto, r.empleado, r.no_cui, r.nombre_puesto || 'Ninguno'],
         setData: (form) => ({
           empresa: form.empresa.value,
           puesto: form.puesto.value,
           empleado: form.empleado.value,
-          noCui: form.no_cui.value,
-          nombrePuesto: form.nombre_puesto.value
+          no_cui: form.no_cui.value,
+          nombre_puesto: form.nombre_puesto.value
         }),
         setRow: (r, form) => {
           form.empresa.value = r.empresa;
@@ -350,7 +346,32 @@
       cfgFormElements = {};
 
       config.campos.forEach(campo => {
-        if (campo.tipo === 'select') {
+        if (campo.tipo === 'select_api') {
+          const label = document.createElement('label');
+          const select = document.createElement('select');
+          select.id = 'cfg-' + campo.id;
+          // Opción por defecto
+          const defaultOpt = document.createElement('option');
+          defaultOpt.value = '';
+          defaultOpt.textContent = 'Seleccionar';
+          select.appendChild(defaultOpt);
+          // Cargar opciones desde la API del catálogo
+          fetch(campo.apiUrl)
+            .then(r => r.json())
+            .then(data => {
+              data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[campo.campoValor];
+                option.textContent = item[campo.campoValor];
+                select.appendChild(option);
+              });
+            })
+            .catch(e => console.error('Error cargando opciones para ' + campo.id + ':', e));
+          label.textContent = campo.label;
+          label.appendChild(select);
+          grid.appendChild(label);
+          cfgFormElements[campo.id] = select;
+        } else if (campo.tipo === 'select') {
           const label = document.createElement('label');
           const select = document.createElement('select');
           select.id = 'cfg-' + campo.id;
@@ -418,7 +439,7 @@
           tbody.innerHTML = '';
           data.forEach((item, idx) => {
             const tr = document.createElement('tr');
-            tr.innerHTML = cfg.getRow(item, idx).map(v => `<td>${v ?? ''}</td>`).join('');
+            tr.innerHTML = cfg.getRow(item, idx).map(v => `<td>${v ?? 'Ninguno'}</td>`).join('');
             tr.style.cursor = 'pointer';
             tr.addEventListener('click', () => cfgSeleccionar(item.id));
             tbody.appendChild(tr);
@@ -470,7 +491,7 @@
       const datos = cfg.setData(cfgFormElements);
       const requeridos = cfg.campos.filter(c => c.requerido).map(c => c.id);
       const faltantes = requeridos.filter(r => !datos[r] || !datos[r].toString().trim());
-      
+
       if (faltantes.length > 0) {
         return alert('Por favor completa los campos requeridos: ' + faltantes.join(', '));
       }
@@ -512,7 +533,7 @@
       const datos = cfg.setData(cfgFormElements);
       const requeridos = cfg.campos.filter(c => c.requerido).map(c => c.id);
       const faltantes = requeridos.filter(r => !datos[r] || !datos[r].toString().trim());
-      
+
       if (faltantes.length > 0) {
         return alert('Por favor completa los campos requeridos: ' + faltantes.join(', '));
       }
@@ -586,13 +607,13 @@
     // ==================== CATÁLOGOS AUXILIARES ====================
     const catalogoConfig = {
       'labores': { titulo: 'Labores', icono: '🌾', api: '/accounts/api/labores/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
-      'cuentas': { titulo: 'Cuentas', icono: '💰', api: '/accounts/api/cuentas/', campo2: 'Descripción', campo3: 'Tipo', cols: ['Código', 'Descripción', 'Tipo'], getRow: r => [r.codigo, r.descripcion, r.tipo || ''], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2(), tipo: catCampo3() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); catSetCampo3(r.tipo || ''); } },
+      'cuentas': { titulo: 'Cuentas', icono: '💰', api: '/accounts/api/cuentas/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
       'unidades': { titulo: 'U/Medida', icono: '📐', api: '/accounts/api/unidades/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
       'variedades': { titulo: 'Variedades', icono: '🌿', api: '/accounts/api/variedades/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
-      'tipos-maquina': { titulo: 'Tipo de Máquina', icono: '🚜', api: '/accounts/api/tipos-maquina/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
+      'tipos-maquina': { titulo: 'Tipo De Máquina', icono: '🚜', api: '/accounts/api/tipos-maquina/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
       'marcas': { titulo: 'Marcas', icono: '🏷️', api: '/accounts/api/marcas/', campo2: 'Descripción', campo3: null, cols: ['Código', 'Descripción'], getRow: r => [r.codigo, r.descripcion], getData: () => ({ codigo: catCodigo(), descripcion: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.descripcion); } },
-      'municipios': { titulo: 'Municipios', icono: '📍', api: '/accounts/api/municipios/', campo2: 'Nombre', campo3: 'Departamento', cols: ['Código', 'Nombre', 'Departamento'], getRow: r => [r.codigo, r.nombre, r.departamento || ''], getData: () => ({ codigo: catCodigo(), nombre: catCampo2(), departamento: catCampo3() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.nombre); catSetCampo3(r.departamento || ''); } },
-      'auxiliares': { titulo: 'Auxiliares', icono: '👥', api: '/accounts/api/auxiliares/', campo2: 'Nombre', campo3: 'Tipo', cols: ['Código', 'Nombre', 'Tipo'], getRow: r => [r.codigo, r.nombre, r.tipo || ''], getData: () => ({ codigo: catCodigo(), nombre: catCampo2(), tipo: catCampo3() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.nombre); catSetCampo3(r.tipo || ''); } },
+      'municipios': { titulo: 'Municipios', icono: '📍', api: '/accounts/api/municipios/', campo2: 'Nombre', campo3: 'Departamento', cols: ['Código', 'Nombre', 'Departamento'], getRow: r => [r.codigo, r.nombre, r.departamento || 'Ninguno'], getData: () => ({ codigo: catCodigo(), nombre: catCampo2(), departamento: catCampo3() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.nombre); catSetCampo3(r.departamento || ''); } },
+      'auxiliares': { titulo: 'Auxiliares', icono: '👥', api: '/accounts/api/auxiliares/', campo2: 'Nombre', campo3: null, cols: ['Código', 'Nombre'], getRow: r => [r.codigo, r.nombre], getData: () => ({ codigo: catCodigo(), nombre: catCampo2() }), setRow: (r) => { catSetCodigo(r.codigo); catSetCampo2(r.nombre); } },
     };
 
     let catActual = 'labores';
@@ -653,7 +674,7 @@
           tbody.innerHTML = '';
           data.forEach(item => {
             const tr = document.createElement('tr');
-            tr.innerHTML = cfg.getRow(item).map(v => `<td>${v ?? ''}</td>`).join('');
+            tr.innerHTML = cfg.getRow(item).map(v => `<td>${v ?? 'Ninguno'}</td>`).join('');
             tr.style.cursor = 'pointer';
             tr.addEventListener('click', () => catSeleccionar(item.id));
             tbody.appendChild(tr);
@@ -681,10 +702,10 @@
       if (!datos.codigo) return alert('El código es requerido');
       const url = catEditando ? `${cfg.api}${catEditando}/` : cfg.api;
       const method = catEditando ? 'PUT' : 'POST';
-      fetch(url, { 
-        method, 
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') }, 
-        body: JSON.stringify(datos) 
+      fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify(datos)
       })
         .then(r => {
           if (!r.ok) {
@@ -695,10 +716,10 @@
           return r.json();
         })
         .then(d => {
-          if (d.success || d.id) { 
+          if (d.success || d.id) {
             alert(method === 'POST' ? 'Guardado correctamente' : 'Actualizado correctamente');
-            catLimpiar(); 
-            catCargarTabla(); 
+            catLimpiar();
+            catCargarTabla();
           }
           else alert('Error: ' + (d.error || 'Desconocido'));
         })
@@ -713,10 +734,10 @@
       const cfg = catalogoConfig[catActual];
       const datos = cfg.getData();
       if (!datos.codigo) return alert('El código es requerido');
-      fetch(`${cfg.api}${catEditando}/`, { 
-        method: 'PUT', 
-        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') }, 
-        body: JSON.stringify(datos) 
+      fetch(`${cfg.api}${catEditando}/`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify(datos)
       })
         .then(r => {
           if (!r.ok) {
@@ -727,10 +748,10 @@
           return r.json();
         })
         .then(d => {
-          if (d.success) { 
+          if (d.success) {
             alert('Actualizado correctamente');
-            catLimpiar(); 
-            catCargarTabla(); 
+            catLimpiar();
+            catCargarTabla();
           }
           else alert('Error: ' + (d.error || 'Desconocido'));
         })
@@ -744,9 +765,9 @@
       if (!catEditando) return alert('Selecciona un registro');
       if (!confirm('¿Estás seguro de que deseas eliminar este registro?')) return;
       const cfg = catalogoConfig[catActual];
-      fetch(`${cfg.api}${catEditando}/`, { 
-        method: 'DELETE', 
-        headers: { 'X-CSRFToken': getCookie('csrftoken') } 
+      fetch(`${cfg.api}${catEditando}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
       })
         .then(r => {
           if (!r.ok) {
@@ -757,10 +778,10 @@
           return r.json();
         })
         .then(d => {
-          if (d.success) { 
+          if (d.success) {
             alert('Eliminado correctamente');
-            catLimpiar(); 
-            catCargarTabla(); 
+            catLimpiar();
+            catCargarTabla();
           }
           else alert('Error: ' + (d.error || 'Desconocido'));
         })

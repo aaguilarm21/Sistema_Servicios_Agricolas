@@ -73,7 +73,7 @@
                         </div>
                         <div class="form-group">
                             <label for="codigo_maquina">Código Máquina</label>
-                            <select id="codigo_maquina" name="codigo_maquina">
+                            <select id="codigo_maquina" name="codigo_maquina" required>
                                 <option value="">Seleccionar Máquina</option>
                                 {% for maq in maquinarias %}
                                 <option value="{{ maq.codigo_maquina }}" data-placa="{{ maq.placa_matricula|default:'' }}">{{ maq.codigo_maquina }} - {{ maq.tipo_maquina }}</option>
@@ -82,17 +82,17 @@
                         </div>
                         <div class="form-group">
                             <label for="placa">Placa</label>
-                            <input type="text" id="placa" name="placa">
+                            <input type="text" id="placa" name="placa" required>
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_operador">Código Operador</label>
-                            <input type="text" id="codigo_operador" placeholder="Ingrese el código y presione Enter o Tab">
+                            <input type="text" id="codigo_operador" placeholder="Ingrese el código y presione Enter o Tab" required>
                         </div>
                         <div class="form-group">
                             <label for="operador">Operador (Nombre)</label>
-                            <input type="text" id="operador" name="operador" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="operador" name="operador" readonly style="background-color: #f5f5f5;" required>
                         </div>
                     </div>
                 </div>
@@ -116,21 +116,21 @@
                         </div>
                         <div class="form-group">
                             <label for="area_lote">Área Lote (Ha)</label>
-                            <input type="number" id="area_lote" name="area_lote" step="0.01">
+                            <input type="number" id="area_lote" name="area_lote" step="0.01" required>
                         </div>
                     </div>
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="codigo_labor">Código Labor</label>
-                            <input type="text" id="codigo_labor" placeholder="Ingrese código">
+                            <input type="text" id="codigo_labor" placeholder="Ingrese código" required>
                         </div>
                         <div class="form-group">
                             <label for="labor">Labor (Nombre)</label>
-                            <input type="text" id="labor" name="labor" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="labor" name="labor" readonly style="background-color: #f5f5f5;" required>
                         </div>
                         <div class="form-group">
                             <label for="corte_semilla">Lote Corte Semilla (Si=1 No=2)</label>
-                            <input type="text" id="corte_semilla" name="corte_semilla" placeholder="1 o 2">
+                            <input type="text" id="corte_semilla" name="corte_semilla" placeholder="1 o 2" required>
                         </div>
                     </div>
                 </div>
@@ -141,29 +141,29 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="unidades">Unidades</label>
-                            <input type="number" id="unidades" name="unidades" step="0.01">
+                            <input type="number" id="unidades" name="unidades" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="horometro_inicial">Horómetros Inicial</label>
-                            <input type="number" id="horometro_inicial" name="horometro_inicial" step="0.01">
+                            <input type="number" id="horometro_inicial" name="horometro_inicial" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="horometro_final">Horómetros Final</label>
-                            <input type="number" id="horometro_final" name="horometro_final" step="0.01">
+                            <input type="number" id="horometro_final" name="horometro_final" step="0.01" required>
                         </div>
                     </div>
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="costo_unitario">Costo Unitario</label>
-                            <input type="number" id="costo_unitario" name="costo_unitario" step="0.01">
+                            <input type="number" id="costo_unitario" name="costo_unitario" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="num_factura">No. Factura</label>
-                            <input type="text" id="num_factura" name="num_factura">
+                            <input type="text" id="num_factura" name="num_factura" required>
                         </div>
                         <div class="form-group">
                             <label for="cuenta_contable">Cuenta Contable</label>
-                            <input type="text" id="cuenta_contable" name="cuenta_contable">
+                            <input type="text" id="cuenta_contable" name="cuenta_contable" required>
                         </div>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
                     <div class="form-row three-cols">
                         <div class="form-group">
                             <label for="variedad">Variedad</label>
-                            <select id="variedad" name="variedad">
+                            <select id="variedad" name="variedad" required>
                                 <option value="">Seleccionar Variedad</option>
                                 {% for var in variedades %}
                                 <option value="{{ var.descripcion }}">{{ var.codigo }} - {{ var.descripcion }}</option>
@@ -183,11 +183,11 @@
                         </div>
                         <div class="form-group">
                             <label for="total_paquetes">Total Paq/Cajas</label>
-                            <input type="number" id="total_paquetes" name="total_paquetes">
+                            <input type="number" id="total_paquetes" name="total_paquetes" required>
                         </div>
                         <div class="form-group">
                             <label for="peso_kg">Peso Kg</label>
-                            <input type="number" id="peso_kg" name="peso_kg" step="0.01">
+                            <input type="number" id="peso_kg" name="peso_kg" step="0.01" required>
                         </div>
                     </div>
                 </div>
@@ -198,31 +198,31 @@
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_caporal_01">Código Supervisor 1</label>
-                            <input type="text" id="codigo_caporal_01" placeholder="Ingrese código">
+                            <input type="text" id="codigo_caporal_01" placeholder="Ingrese código" required>
                         </div>
                         <div class="form-group">
                             <label for="caporal_01">Supervisor 1 (Nombre)</label>
-                            <input type="text" id="caporal_01" name="caporal_01" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="caporal_01" name="caporal_01" readonly style="background-color: #f5f5f5;" required>
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_caporal_02">Código Supervisor 2</label>
-                            <input type="text" id="codigo_caporal_02" placeholder="Ingrese código">
+                            <input type="text" id="codigo_caporal_02" placeholder="Ingrese código" required>
                         </div>
                         <div class="form-group">
                             <label for="caporal_02">Supervisor 2 (Nombre)</label>
-                            <input type="text" id="caporal_02" name="caporal_02" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="caporal_02" name="caporal_02" readonly style="background-color: #f5f5f5;" required>
                         </div>
                     </div>
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="codigo_mayordomo">Código Supervisor 3</label>
-                            <input type="text" id="codigo_mayordomo" placeholder="Ingrese código">
+                            <input type="text" id="codigo_mayordomo" placeholder="Ingrese código" required>
                         </div>
                         <div class="form-group">
                             <label for="mayordomo">Supervisor 3 (Nombre)</label>
-                            <input type="text" id="mayordomo" name="mayordomo" readonly style="background-color: #f5f5f5;">
+                            <input type="text" id="mayordomo" name="mayordomo" readonly style="background-color: #f5f5f5;" required>
                         </div>
                     </div>
                 </div>
@@ -233,7 +233,7 @@
                     <div class="form-row two-cols">
                         <div class="form-group">
                             <label for="lugar_origen">Lugar de Origen</label>
-                            <select id="lugar_origen" name="lugar_origen">
+                            <select id="lugar_origen" name="lugar_origen" required>
                                 <option value="">Seleccionar Municipio</option>
                                 {% for m in municipios %}
                                 <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
@@ -242,7 +242,7 @@
                         </div>
                         <div class="form-group">
                             <label for="lugar_destino">Lugar de Destino</label>
-                            <select id="lugar_destino" name="lugar_destino">
+                            <select id="lugar_destino" name="lugar_destino" required>
                                 <option value="">Seleccionar Municipio</option>
                                 {% for m in municipios %}
                                 <option value="{{ m.nombre }}">{{ m.codigo }} - {{ m.nombre }}</option>
@@ -258,7 +258,7 @@
                     <div class="form-row full">
                         <div class="form-group">
                             <label for="observaciones">Notas Adicionales</label>
-                            <textarea id="observaciones" name="observaciones" placeholder="Escriba aquí cualquier comentario o nota importante..."></textarea>
+                            <textarea id="observaciones" name="observaciones" placeholder="Escriba aquí cualquier comentario o nota importante..." required></textarea>
                         </div>
                     </div>
                 </div>
@@ -290,6 +290,10 @@
                 if (inputEl && outputEl) {
                     inputEl.addEventListener('blur', function() {
                         const codigo = this.value.trim();
+                        if (codigo === '0') {
+                            outputEl.value = 'Ninguno';
+                            return;
+                        }
                         if (codigo) {
                             fetch(`/accounts/api/buscar-usuario/?codigo=${codigo}`)
                                 .then(response => response.json())
@@ -343,6 +347,12 @@
                         this.value = 'Ninguna';
                     }
                 });
+            }
+
+            const inputCuentaContable = document.getElementById('cuenta_contable');
+            if (inputCuentaContable && !inputCuentaContable.value) {
+                // Generar número de cuenta automático (6 dígitos aleatorios)
+                inputCuentaContable.value = Math.floor(100000 + Math.random() * 900000).toString();
             }
         });
 

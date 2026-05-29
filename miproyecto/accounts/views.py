@@ -239,14 +239,14 @@ def api_empleados(request):
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
-            if not data.get('empresa') or not data.get('empleado') or not data.get('noCui'):
+            if not data.get('empresa') or not data.get('empleado') or not data.get('no_cui'):
                 return JsonResponse({'error': 'Faltan campos requeridos'}, status=400)
             empleado = Empleado.objects.create(
                 empresa=data.get('empresa'),
                 empleado=data.get('empleado'),
-                no_cui=data.get('noCui'),
+                no_cui=data.get('no_cui'),
                 puesto=data.get('puesto', ''),
-                nombre_puesto=data.get('nombrePuesto', '')
+                nombre_puesto=data.get('nombre_puesto', '')
             )
             return JsonResponse({'success': True, 'message': 'Empleado creado correctamente', 'id': empleado.id}, status=201)
         except Exception as e:
@@ -266,9 +266,9 @@ def api_empleado_detalle(request, empleado_id):
             data = json.loads(request.body)
             empleado.empresa = data.get('empresa', empleado.empresa)
             empleado.empleado = data.get('empleado', empleado.empleado)
-            empleado.no_cui = data.get('noCui', empleado.no_cui)
+            empleado.no_cui = data.get('no_cui', empleado.no_cui)
             empleado.puesto = data.get('puesto', empleado.puesto)
-            empleado.nombre_puesto = data.get('nombrePuesto', empleado.nombre_puesto)
+            empleado.nombre_puesto = data.get('nombre_puesto', empleado.nombre_puesto)
             empleado.save()
             return JsonResponse({'success': True, 'message': 'Empleado actualizado correctamente'})
         except Exception as e:
@@ -552,7 +552,7 @@ def api_variedad_detalle(request, pk):
 def api_tipos_maquina(request):
     return _api_catalogo_list_create(
         request, TipoMaquina, ['codigo', 'descripcion'],
-        lambda d: TipoMaquina.objects.create(codigo=d['codigo'], descripcion=d['descripcion'])
+        lambda d: TipoMaquina.objects.create(codigo=d['codigo'], descripcion=d['descripcion'].title())
     )
 
 @login_required
@@ -561,6 +561,8 @@ def api_tipo_maquina_detalle(request, pk):
     def upd(obj, d):
         obj.codigo = d.get('codigo', obj.codigo)
         obj.descripcion = d.get('descripcion', obj.descripcion)
+        if isinstance(obj.descripcion, str):
+            obj.descripcion = obj.descripcion.title()
     return _api_catalogo_detail(request, TipoMaquina, pk, upd, 'Tipo de Máquina')
 
 

@@ -70,8 +70,11 @@
           .record-grid { grid-template-columns: 1fr; }
       }
       @media print {
-          .btn-volver, .button-row, form { display: none !important; }
-          .main-wrapper { padding: 0 !important; }
+          header, .form-card:first-of-type, .btn-volver, .button-row, form { display: none !important; }
+          .main-wrapper { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+          .form-card { margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; background: transparent !important; }
+          .record-card { page-break-inside: avoid; break-inside: avoid; border-color: #000; box-shadow: none; margin-bottom: 10px; }
+          body { background: white !important; }
       }
   </style>
 </head>
@@ -90,8 +93,8 @@
       <form method="GET" action="{% url 'reportes' %}">
           <div class="form-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px;">
             <label style="display: flex; flex-direction: column; gap: 6px;">Tipo de Reporte
-                <select name="tipo_reporte" required style="width: 100%; min-width: 300px; height: 38px; padding: 6px 10px; line-height: normal; box-sizing: border-box;">
-                    <option value="">Seleccionar</option>
+                <select name="tipo_reporte" style="width: 100%; min-width: 300px; height: 38px; padding: 6px 10px; line-height: normal; box-sizing: border-box;">
+                    <option value="">Todos los Tipos</option>
                     <option value="Aplicaciones aereas" {% if request.GET.tipo_reporte == 'Aplicaciones aereas' %}selected{% endif %}>Aplicaciones aéreas</option>
                     <option value="Envio de semilla de caña" {% if request.GET.tipo_reporte == 'Envio de semilla de caña' %}selected{% endif %}>Envío de semilla de caña</option>
                     <option value="Maquinaria rentada" {% if request.GET.tipo_reporte == 'Maquinaria rentada' %}selected{% endif %}>Maquinaria rentada</option>
@@ -118,7 +121,7 @@
 
     {% if registros != None %}
     <section class="form-card">
-        <h2>Resultados del Reporte{% if request.GET.tipo_reporte %}: {{ request.GET.tipo_reporte }}{% endif %} ({{ registros|length }} registros encontrados)</h2>
+        <h2>Resultados del Reporte{% if request.GET.tipo_reporte %}: {{ request.GET.tipo_reporte }}{% else %}: Todos los Tipos{% endif %} ({{ registros|length }} registros encontrados)</h2>
         <div class="records-list" style="margin-top: 15px;">
             {% for r in registros %}
             <div class="record-card">

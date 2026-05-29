@@ -309,12 +309,14 @@ def reportes(request):
     
     registros = None
     
-    if tipo_reporte and fecha_inicio and fecha_fin:
+    if fecha_inicio and fecha_fin:
         registros = RegistroOperativo.objects.filter(
-            tipo_servicio=tipo_reporte,
             fecha_labor__gte=fecha_inicio,
             fecha_labor__lte=fecha_fin
-        ).order_by('-fecha_labor')
+        )
+        if tipo_reporte:
+            registros = registros.filter(tipo_servicio=tipo_reporte)
+        registros = registros.order_by('-fecha_labor')
         
     return render(request, 'reportes.html', {
         'registros': registros

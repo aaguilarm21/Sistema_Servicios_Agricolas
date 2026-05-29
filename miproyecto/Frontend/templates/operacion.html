@@ -6,6 +6,31 @@
   <title>Operación Agrícola / Logística</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/modulos.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/registros.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/mensajes.css' %}">
+  <style>
+      .btn-primary, .btn-secondary {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          font-weight: 600;
+          border-radius: 8px;
+          border: 2px solid transparent;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          white-space: nowrap;
+          cursor: pointer;
+          gap: 8px;
+          padding: 10px 16px;
+          font-size: 0.95rem;
+      }
+      .btn-primary { background: #4CAF50; color: white; }
+      .btn-primary:hover { background: #388e3c; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+      .btn-secondary { background: #e0e0e0; color: #333; }
+      .btn-secondary:hover { background: #bdbdbd; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+      .btn-volver { padding: 5px 10px !important; font-size: 0.82rem !important; }
+  </style>
 </head>
 <body>
   <div class="main-wrapper">
@@ -14,22 +39,35 @@
         <h1>Operación Agrícola / Logística</h1>
         <p>Gestiona las operaciones agrícolas y logísticas.</p>
       </div>
-      <a href="{% url 'modulos' %}" class="btn-volver">Volver a Módulos</a>
+      <a href="{% url 'modulos' %}" class="btn-volver">Volver A Módulos</a>
     </header>
 
     <section class="form-card">
       <h2>Operaciones</h2>
-      <div class="form-grid">
-        <label>Tipo de Operación<select><option>Seleccionar</option><option>Siembra</option><option>Cosecha</option><option>Transporte</option></select></label>
-        <label>Fecha<input type="date" /></label>
-      </div>
-      <div class="form-grid">
-        <label>Descripción<textarea rows="3"></textarea></label>
-      </div>
-      <div class="button-row">
-        <button class="btn">Registrar Operación</button>
-        <button class="btn btn-secondary">Limpiar</button>
-      </div>
+      <form id="operacion-form" onsubmit="event.preventDefault(); alert('Operación registrada exitosamente.'); this.reset();">
+          <div class="form-grid">
+            <label>Tipo de Servicio
+                <select name="tipo_servicio" required>
+                    <option value="">Seleccionar</option>
+                    <option value="Aplicaciones aereas">Aplicaciones aéreas</option>
+                    <option value="Envio de semilla de caña">Envío de semilla de caña</option>
+                    <option value="Maquinaria rentada">Maquinaria rentada</option>
+                    <option value="Servicio contratado">Servicio contratado</option>
+                    <option value="Servicios de pinchazo">Servicios de pinchazo</option>
+                    <option value="Transporte de personal">Transporte de personal</option>
+                    <option value="Viajes de material o maquinaria">Viajes de material o maquinaria</option>
+                </select>
+            </label>
+            <label>Fecha<input type="date" required /></label>
+          </div>
+          <div class="form-grid">
+            <label>Descripción<textarea rows="3" required></textarea></label>
+          </div>
+          <div class="button-row">
+            <button type="submit" class="btn-primary">💾 Registrar Operación</button>
+            <button type="button" class="btn-secondary" onclick="document.getElementById('operacion-form').reset()">🔄 Limpiar</button>
+          </div>
+      </form>
     </section>
 
 
