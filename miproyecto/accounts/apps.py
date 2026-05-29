@@ -6,5 +6,5 @@ class AccountsConfig(AppConfig):
     name = 'accounts'
 
     def ready(self):
-        # Import signals to ensure they are registered.
+        # Importar señales para asegurar que estén registradas.
         from . import signals  # noqa: F401

@@ -16,20 +16,20 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Construye rutas dentro del proyecto así: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Cargar variables de entorno desde .env
 load_dotenv(BASE_DIR / '.env')
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# Configuración de inicio rápido para desarrollo - no apta para producción
+# Ver https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# ADVERTENCIA DE SEGURIDAD: mantiene la clave secreta usada en producción en privado!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-btqhcotsy+wni(ajh5=stc-)hhy6dddthr7^dia)0ayxjm94dc')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# ADVERTENCIA DE SEGURIDAD: no ejecutes con DEBUG activado en producción!
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 # Hosts permitidos
@@ -44,7 +44,7 @@ if EXTRA_HOSTS:
     ALLOWED_HOSTS.extend(EXTRA_HOSTS.split(','))
 
 
-# Application definition
+# Definición de aplicaciones
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Local apps
+    # Aplicaciones locales
     'accounts',
 ]
 
@@ -86,14 +86,14 @@ TEMPLATES = [
     },
 ]
 
-# Redirect users after login/logout
-LOGIN_REDIRECT_URL = '/modulos/'  # After successful login (go to módulos)
-LOGOUT_REDIRECT_URL = '/accounts/login/'  # After logout
+# Redirigir usuarios después de login/logout
+LOGIN_REDIRECT_URL = '/modulos/'  # Después de iniciar sesión correctamente (ir a módulos)
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # Después de cerrar sesión
 
 WSGI_APPLICATION = 'miproyecto.wsgi.application'
 
 
-# Database
+# Base de datos
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 # Usa DATABASE_URL si existe (Render/Supabase), sino usa variables individuales
 
@@ -120,7 +120,7 @@ else:
     }
 
 
-# Password validation
+# Validación de contraseñas
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -139,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# Internacionalización
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'es'
@@ -151,7 +151,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Archivos estáticos (CSS, JavaScript, Imágenes)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
@@ -169,7 +169,7 @@ STORAGES = {
     },
 }
 
-# Default primary key field type
+# Tipo de campo de clave primaria predeterminado
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CSRF — Confiar en el dominio de Render

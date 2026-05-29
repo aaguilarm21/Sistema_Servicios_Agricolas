@@ -33,13 +33,13 @@ class Command(BaseCommand):
         email = options['email']
         role = options['role']
 
-        # Generate username if not provided
+        # Generar nombre de usuario si no se proporciona
         if not username:
             if not name:
                 raise CommandError("Debe proporcionar --name o --username.")
             username = name.lower().replace(' ', '_').replace('-', '_')
 
-        # Generate password if not provided
+        # Generar contraseña si no se proporciona
         if not password:
             if role == 'admin':
                 password = 'Admin2026'
