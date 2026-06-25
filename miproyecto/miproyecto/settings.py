@@ -99,25 +99,35 @@ WSGI_APPLICATION = 'miproyecto.wsgi.application'
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-# Si DB_HOST es una URL completa, la tratamos como DATABASE_URL
-if not DATABASE_URL and os.getenv('DB_HOST', '').startswith(('postgresql://', 'postgres://')):
-    DATABASE_URL = os.getenv('DB_HOST')
-
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
-    }
-else:
+# Priorizar entorno de desarrollo: si DEBUG=True usamos SQLite local
+if DEBUG:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'sistema_agricola'),
-            'USER': os.getenv('DB_USER', 'postgres'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+else:
+    # Si DB_HOST es una URL completa, la tratamos como DATABASE_URL
+    if not DATABASE_URL and os.getenv('DB_HOST', '').startswith(('postgresql://', 'postgres://')):
+        DATABASE_URL = os.getenv('DB_HOST')
+
+    if DATABASE_URL:
+        DATABASES = {
+            'default': dj_database_url.parse(DATABASE_URL)
+        }
+    else:
+        # En producción exigimos variables de conexión a Postgres
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('DB_NAME', 'sistema_agricola'),
+                'USER': os.getenv('DB_USER', 'postgres'),
+                'PASSWORD': os.getenv('DB_PASSWORD', ''),
+                'HOST': os.getenv('DB_HOST', 'localhost'),
+                'PORT': os.getenv('DB_PORT', '5432'),
+            }
+        }
 
 
 # Validación de contraseñas
