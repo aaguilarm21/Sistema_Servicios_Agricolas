@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4efe9" />
+    <title>¡FELIZ CUMPLEAÑOS!</title>
+    <style>
+      :root {
+        --ink: #4a3b39;
+        --muted: #83736c;
+        --paper: #f6eee7;
+        --rose: #9b3340;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #d7c9be;
+        color: var(--ink);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+
+      .page {
+        width: min(100%, 480px);
+        min-height: 100vh;
+        min-height: 100svh;
+        margin: 0 auto;
+        padding: 20px 25px 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(180deg, #f4eae1 0%, #eddfd3 100%);
+      }
+
+      .back {
+        align-self: flex-start;
+        min-height: 34px;
+        color: var(--muted);
+        font-size: .9rem;
+        text-decoration: none;
+      }
+
+      .polaroid {
+        width: min(100%, 370px);
+        margin-top: 4px;
+        padding: 14px 14px 20px;
+        background: var(--paper);
+        box-shadow: 0 12px 26px rgba(68, 50, 44, .16);
+        transform: rotate(-.6deg);
+      }
+
+      .photo-space {
+        width: 100%;
+        background: #e6dacf;
+        border: 1px solid rgba(100, 78, 67, .12);
+      }
+
+      .photo-stack {
+        width: 100%;
+        min-width: 0;
+        margin-top: 4px;
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        overscroll-behavior-x: contain;
+      }
+
+      .photo-stack::-webkit-scrollbar { display: none; }
+
+      .photo-slide {
+        flex: 0 0 100%;
+        scroll-snap-align: center;
+      }
+
+      .photo-stack .polaroid { margin: 0 auto; }
+      .photo-stack .photo-slide:nth-child(2) .polaroid { transform: rotate(.5deg); }
+
+      .photo-carousel {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .carousel-controls {
+        width: min(100%, 370px);
+        margin: 10px auto 0;
+        display: grid;
+        grid-template-columns: 36px 1fr 36px;
+        align-items: center;
+      }
+
+      .carousel-arrow {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font: inherit;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      .carousel-arrow:focus-visible,
+      .carousel-dot:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 2px;
+      }
+
+      .carousel-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .carousel-dot {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .carousel-dot::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #d3c5bb;
+        content: "";
+      }
+
+      .carousel-dot[aria-current="true"]::before { background: #806c62; }
+
+      .photo-space img,
+      .memory-space img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .caption {
+        margin: 0;
+        color: #534541;
+        font-size: 1.35rem;
+        text-align: center;
+      }
+
+      .divider {
+        margin: 30px 0 22px;
+        color: #a18a7d;
+        font-size: 1.8rem;
+        line-height: 1;
+      }
+
+      .note {
+        width: 100%;
+        min-height: 230px;
+        display: grid;
+        place-items: center;
+        background: rgba(232, 185, 126, .33);
+      }
+
+      .envelope-stage {
+        position: relative;
+        width: min(100%, 260px);
+        height: 205px;
+      }
+
+      .envelope {
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        bottom: 8px;
+        width: 190px;
+        height: 124px;
+        overflow: visible;
+        border: 0;
+        border-radius: 5px;
+        background: #d99083;
+        box-shadow: 0 10px 18px rgba(84, 48, 43, .2);
+        color: #fff8f2;
+        cursor: pointer;
+        transform: translateX(-50%);
+        transition: transform 180ms ease;
+      }
+
+      .envelope:hover { transform: translateX(-50%) translateY(-3px); }
+      .envelope:focus-visible { outline: 3px solid var(--ink); outline-offset: 5px; }
+
+      .envelope::before,
+      .envelope::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+      }
+
+      .envelope::before {
+        z-index: 3;
+        height: 72px;
+        background: #c77a73;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        transform-origin: top center;
+        transition: transform 650ms cubic-bezier(.2,.75,.25,1), z-index 0s 325ms;
+      }
+
+      .envelope::after {
+        z-index: 4;
+        background: #df9c8d;
+        clip-path: polygon(0 30%, 50% 68%, 100% 30%, 100% 100%, 0 100%);
+      }
+
+      .envelope-label {
+        position: absolute;
+        z-index: 5;
+        right: 0;
+        bottom: 13px;
+        left: 0;
+        font: 600 .85rem Georgia, "Times New Roman", serif;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .note.is-open .envelope::before {
+        z-index: 1;
+        transform: rotateX(180deg);
+      }
+
+      .letter {
+        position: absolute;
+        z-index: 5;
+        bottom: 20px;
+        left: 50%;
+        width: 174px;
+        min-height: 112px;
+        margin: 0;
+        padding: 18px 15px;
+        display: grid;
+        place-items: center;
+        background: #fffaf4;
+        box-shadow: 0 5px 12px rgba(68, 50, 44, .14);
+        color: var(--ink);
+        font-size: .95rem;
+        font-style: italic;
+        line-height: 1.5;
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translate(-50%, 40px) scale(.92);
+        transition: transform 550ms cubic-bezier(.2,.75,.25,1), opacity 220ms ease, visibility 0s linear 550ms;
+      }
+
+      .note.is-open .letter {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, -54px) scale(1);
+        transition: transform 550ms cubic-bezier(.2,.75,.25,1), opacity 250ms ease 120ms, visibility 0s;
+      }
+
+      .sparkle {
+        position: absolute;
+        z-index: 6;
+        color: #a94255;
+        font-size: 1.35rem;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .sparkle:nth-of-type(1) { top: 32px; left: 24px; }
+      .sparkle:nth-of-type(2) { top: 12px; right: 35px; font-size: 1rem; }
+      .sparkle:nth-of-type(3) { top: 90px; right: 12px; font-size: .9rem; }
+      .sparkle:nth-of-type(4) { top: 75px; left: 8px; font-size: 1rem; }
+
+      .note.is-open .sparkle { animation: love-sparkle 850ms ease-out both; }
+      .note.is-open .sparkle:nth-of-type(2) { animation-delay: 100ms; }
+      .note.is-open .sparkle:nth-of-type(3) { animation-delay: 180ms; }
+      .note.is-open .sparkle:nth-of-type(4) { animation-delay: 240ms; }
+
+      @keyframes love-sparkle {
+        0% { opacity: 0; transform: scale(.2) rotate(-25deg); }
+        35% { opacity: 1; transform: scale(1.15) rotate(12deg); }
+        100% { opacity: 0; transform: scale(.55) rotate(35deg); }
+      }
+
+      .message {
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 1rem;
+        font-style: italic;
+      }
+
+      .story-section {
+        width: 100%;
+        margin-top: 36px;
+        padding: 32px 0 20px;
+        border-top: 1px solid rgba(131, 115, 108, .25);
+        text-align: center;
+      }
+
+      .story-title,
+      .story-subtitle {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.2rem;
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .duration {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        width: min(100%, 300px);
+        margin: 22px auto 18px;
+      }
+
+      .duration-item { display: grid; gap: 5px; }
+
+      .duration-number {
+        color: #241b1b;
+        font-size: 2.25rem;
+        line-height: 1;
+      }
+
+      .duration-label {
+        color: var(--muted);
+        font-size: .68rem;
+        text-transform: uppercase;
+      }
+
+      .story-subtitle { margin-bottom: 22px; }
+
+      .memory-photo {
+        width: min(100%, 370px);
+        margin: 0 auto;
+        padding: 10px 10px 16px;
+        background: var(--paper);
+        box-shadow: 0 12px 26px rgba(68, 50, 44, .16);
+        transform: rotate(.4deg);
+      }
+
+      .memory-space {
+        width: 100%;
+        border: 1px solid rgba(100, 78, 67, .12);
+        background: #e6dacf;
+      }
+
+      .memory-caption {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: 1.15rem;
+        font-style: italic;
+        line-height: 1.5;
+      }
+
+      @media (max-height: 720px) {
+        .page { padding-top: 12px; }
+        .polaroid { width: min(100%, 310px); padding: 10px 10px 16px; }
+        .divider { margin: 18px 0 14px; }
+        .note { min-height: 180px; }
+        .envelope-stage { height: 165px; }
+        .envelope { width: 170px; height: 110px; }
+        .letter { width: 156px; min-height: 100px; }
+        .note.is-open .letter { transform: translate(-50%, -47px) scale(1); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .envelope, .envelope::before, .letter { transition-duration: .01ms; }
+        .note.is-open .sparkle { animation-duration: .01ms; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <a class="back" href="index.html" aria-label="Volver al inicio">← Volver</a>
+      <section class="photo-carousel" id="photo-carousel" aria-label="Fotos de ustedes dos">
+        <div class="photo-stack" id="photo-track" tabindex="0" aria-label="Carrusel de fotos">
+          <article class="photo-slide">
+            <figure class="polaroid">
+              <div class="photo-space"><img src="fotos/F1.jpeg" alt="Foto F1, un recuerdo juntos" /></div>
+              <figcaption class="caption">Tú &amp; yo</figcaption>
+            </figure>
+          </article>
+          <article class="photo-slide">
+            <figure class="polaroid">
+              <div class="photo-space"><img src="fotos/F2.jpeg" alt="Foto F2, otro recuerdo juntos" /></div>
+              <figcaption class="caption">Otro de nuestros recuerdos</figcaption>
+            </figure>
+          </article>
+          <article class="photo-slide">
+            <figure class="polaroid">
+              <div class="photo-space"><img src="fotos/F3.jpeg" alt="Foto F3, otro momento especial juntos" /></div>
+              <figcaption class="caption">Un momento especial</figcaption>
+            </figure>
+          </article>
+        </div>
+        <div class="carousel-controls" role="group" aria-label="Controles de fotos">
+          <button class="carousel-arrow" id="previous-photo" type="button" aria-label="Foto anterior">‹</button>
+          <div class="carousel-pagination" aria-label="Seleccionar foto">
+            <button class="carousel-dot" type="button" aria-label="Mostrar foto 1" aria-current="true"></button>
+            <button class="carousel-dot" type="button" aria-label="Mostrar foto 2" aria-current="false"></button>
+            <button class="carousel-dot" type="button" aria-label="Mostrar foto 3" aria-current="false"></button>
+          </div>
+          <button class="carousel-arrow" id="next-photo" type="button" aria-label="Foto siguiente">›</button>
+        </div>
+      </section>
+      <div class="divider" aria-hidden="true">〜</div>
+      <section class="note" id="love-note" aria-label="Sobre con un mensaje">
+        <div class="envelope-stage">
+          <span class="sparkle" aria-hidden="true">✦</span>
+          <span class="sparkle" aria-hidden="true">♡</span>
+          <span class="sparkle" aria-hidden="true">✧</span>
+          <span class="sparkle" aria-hidden="true">♥</span>
+          <p class="letter" id="love-message" aria-hidden="true">Quiero que nunca olvides cuánto te amo y lo feliz que me haces.</p>
+          <button class="envelope" id="envelope" type="button" aria-expanded="false" aria-controls="love-message" aria-label="Abrir el sobre">
+            <span class="envelope-label" id="envelope-label">Abrir</span>
+          </button>
+        </div>
+      </section>
+      <section class="story-section" id="nuestra-historia" data-start-date="2023-10-13" aria-labelledby="story-title">
+        <h2 class="story-title" id="story-title">Felices 30🎊🥳🎉🪅</h2>
+        <figure class="memory-photo">
+          <div class="memory-space"><img src="fotos/F4.jpeg" alt="Foto F4, un recuerdo especial de ustedes dos" /></div>
+          <figcaption class="memory-caption">Gracias por compartir tu vida conmigo</figcaption>
+        </figure>
+      </section>
+    </main>
+    <script>
+      const envelope = document.querySelector("#envelope");
+      const loveNote = document.querySelector("#love-note");
+      const loveMessage = document.querySelector("#love-message");
+      const envelopeLabel = document.querySelector("#envelope-label");
+
+      envelope.addEventListener("click", () => {
+        const isOpen = loveNote.classList.toggle("is-open");
+        envelope.setAttribute("aria-expanded", String(isOpen));
+        envelope.setAttribute("aria-label", isOpen ? "Cerrar el sobre" : "Abrir el sobre");
+        envelopeLabel.textContent = isOpen ? "Cerrar" : "Abrir";
+        loveMessage.setAttribute("aria-hidden", String(!isOpen));
+      });
+
+      const photoTrack = document.querySelector("#photo-track");
+      const photoSlides = [...photoTrack.querySelectorAll(".photo-slide")];
+      const photoDots = [...document.querySelectorAll(".carousel-dot")];
+      let activePhoto = 0;
+
+      const updatePhotoControls = (index) => {
+        activePhoto = index;
+        photoDots.forEach((dot, dotIndex) => {
+          dot.setAttribute("aria-current", String(dotIndex === activePhoto));
+        });
+      };
+
+      const showPhoto = (index) => {
+        const nextPhoto = (index + photoSlides.length) % photoSlides.length;
+        photoTrack.scrollTo({ left: nextPhoto * photoTrack.clientWidth, behavior: "smooth" });
+        updatePhotoControls(nextPhoto);
+      };
+
+      document.querySelector("#previous-photo").addEventListener("click", () => showPhoto(activePhoto - 1));
+      document.querySelector("#next-photo").addEventListener("click", () => showPhoto(activePhoto + 1));
+      photoDots.forEach((dot, index) => dot.addEventListener("click", () => showPhoto(index)));
+      photoTrack.addEventListener("scroll", () => {
+        updatePhotoControls(Math.round(photoTrack.scrollLeft / photoTrack.clientWidth));
+      }, { passive: true });
+    </script>
+  </body>
+</html>

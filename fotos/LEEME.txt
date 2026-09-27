@@ -1,0 +1,8 @@
+CARPETA DE FOTOS
+
+Pega aqui las imagenes que quieras usar (JPG, PNG o WEBP).
+Conserva sus nombres, por ejemplo: playa.jpg, cumple.png, foto1.jpg.
+
+Despues dime cual quieres mostrar (por nombre o descripcion) y la conectare
+al marco de la pagina. Para que aparezca en la pagina publicada, la imagen
+seleccionada debe quedar dentro de esta carpeta del proyecto.
